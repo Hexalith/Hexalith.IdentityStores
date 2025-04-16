@@ -11,7 +11,7 @@
   <Import Project="$(MSBuildThisFileDirectory)Hexalith.Builds/Hexalith.Build.props" />
 
   <PropertyGroup>
-    <Product>Hexalith.MyNewPackage</Product>
-    <RepositoryUrl>https://github.com/Hexalith/Hexalith.MyNewPackage</RepositoryUrl>
+    <Product>Hexalith.IdentityStores</Product>
+    <RepositoryUrl>https://github.com/Hexalith/Hexalith.IdentityStores</RepositoryUrl>
   </PropertyGroup>
 </Project>

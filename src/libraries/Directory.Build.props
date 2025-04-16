@@ -2,6 +2,10 @@
   <PropertyGroup>
     <!-- Define a property to store the path of the parent Directory.Build.props. -->
     <ParentDirectoryBuildProps>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</ParentDirectoryBuildProps>
+    <Description>Hexalith Dapr Actor based identity Store</Description>
+    <PackageProjectUrl>https://github.com/Hexalith/Hexalith.IdentityStores</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Hexalith/Hexalith.IdentityStores</RepositoryUrl>
+    <PackageTags>Hexalith;Identity Store;Dapr</PackageTags>
   </PropertyGroup>
 
   <!-- Import the parent Directory.Build.props file if it exists -->

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">  
+ <PropertyGroup>  
+   <TargetFramework>net9.0</TargetFramework>
+   <NoWarn>$(NoWarn);VSTHRD002;</NoWarn>
+ </PropertyGroup>  
+ <ItemGroup>  
+   <PackageReference Include="AspNet.Security.OAuth.GitHub" />  
+   <PackageReference Include="AspNet.Security.OAuth.Twitter" />  
+   <PackageReference Include="Google.Apis.Auth.AspNetCore3" />  
+   <PackageReference Include="Hexalith.Application.Partitions.Abstractions" />  
+   <PackageReference Include="Hexalith.Application.Sessions.Abstractions" />  
+   <PackageReference Include="Hexalith.Infrastructure.DaprRuntime" />  
+   <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" />  
+   <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" />  
+ </ItemGroup>  
+ <ItemGroup>  
+   <ProjectReference Include="..\Hexalith.IdentityStores.Abstractions\Hexalith.IdentityStores.Abstractions.csproj" />  
+ </ItemGroup>  
+</Project>

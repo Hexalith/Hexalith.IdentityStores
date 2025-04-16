@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>Hexalith.MyNewPackage.Tests</_Parameter1>
+      <_Parameter1>Hexalith.IdentityStores.Tests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
 </Project>

@@ -1,9 +1,9 @@
 # Hexalith.IdentityStores
 
-## Build Status
-
 [![License: MIT](https://img.shields.io/github/license/hexalith/hexalith.IdentityStores)](https://github.com/hexalith/hexalith/blob/main/LICENSE)
 [![Discord](https://img.shields.io/discord/1063152441819942922?label=Discord&logo=discord&logoColor=white&color=d82679)](https://discordapp.com/channels/1102166958918610994/1102166958918610997)
+
+## Build Status
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/31529/badge.svg)](https://scan.coverity.com/projects/hexalith-hexalith-IdentityStores)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/5c786c54c5a9494aa3baa9991ef572dc)](https://app.codacy.com/gh/Hexalith/Hexalith.IdentityStores/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
@@ -19,40 +19,68 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Hexalith_Hexalith.IdentityStores&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Hexalith_Hexalith.IdentityStores)
 
 [![Build status](https://github.com/Hexalith/Hexalith.IdentityStores/actions/workflows/build-release.yml/badge.svg)](https://github.com/Hexalith/Hexalith.IdentityStores/actions)
-[![NuGet](https://img.shields.io/nuget/v/Hexalith.IdentityStores.svg)](https://www.nuget.org/packages/Hexalith.IdentityStores)
-[![Latest](https://img.shields.io/github/v/release/Hexalith/Hexalith.IdentityStores?include_prereleases&label=preview)](https://github.com/Hexalith/Hexalith.IdentityStores/pkgs/nuget/Hexalith.IdentityStores)
+[![NuGet](https://img.shields.io/nuget/v/Hexalith.IdentityStores.svg)](https://www.nuget.org/packages/Hexalith.IdentityStores) <!-- Assuming a main package exists -->
+[![Latest](https://img.shields.io/github/v/release/Hexalith/Hexalith.IdentityStores?include_prereleases&label=preview)](https://github.com/Hexalith/Hexalith.IdentityStores/pkgs/nuget/Hexalith.IdentityStores) <!-- Adjust if main package name differs -->
 
 ## Overview
 
+This repository contains the Hexalith Dapr Identity Stores components, providing functionalities related to user identity management, authentication, and authorization within the Hexalith ecosystem. It includes libraries, server implementations, and examples for integrating identity services into applications.
 
 ## Repository Structure
 
 The repository is organized as follows:
 
-- [src](./src/README.md) Is the source code directory of your project.
-- [src/libraries](./src/libraries/README.md) Is the source code directory where you will add your Nuget package projects.
-- [src/examples](./src/examples/README.md) Contains example implementations of your projects.
-- [src/servers](./src/servers/README.md) Is the source code directory where you will add your Docker container projects.
-- [src/aspire](./src/aspire/README.md) Is the source code directory where you will add your Aspire project.
-- [test](./test/README.md) Contains test projects for your packages.
-- [Hexalith.Builds](./Hexalith.Builds/README.md) Contains shared build configurations and tools.
+- **`src/`**: Contains the core source code.
+  - [`src/libraries/`](./src/libraries/README.md): Class libraries intended to be packaged as NuGet packages. This is likely where the main identity store logic resides.
+  - [`src/servers/`](./src/servers/README.md): Server projects, potentially including API endpoints or services related to identity, possibly packaged as Docker containers.
+  - [`src/examples/`](./src/examples/README.md): Sample projects demonstrating how to use the libraries and servers.
+- **`test/`**: Contains unit, integration, and other test projects.
+  - [`test/Hexalith.IdentityStores.Tests/`](./test/Hexalith.IdentityStores.Tests/): Example test project.
+- **`tools/`**: Utility scripts for development tasks (e.g., `flush_redis.bat`).
+- **`Hexalith.Builds/`**: Git submodule containing shared build configurations, tools, and scripts. See [Hexalith.Builds/README.md](./Hexalith.Builds/README.md) for details on the build system.
+- **`.github/`**: GitHub-specific files, including workflow definitions and issue templates.
+- **Root Files**: Configuration files (`.sln`, `.props`, `package.json`), license, documentation instructions (`DOCUMENTATION.ai.md`), and this README.
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Hexalith.Builds](https://github.com/Hexalith/Hexalith.Builds)
 - [.NET 9 SDK](https://dotnet.microsoft.com/download) or later
-- [PowerShell 7](https://github.com/PowerShell/PowerShell) or later
-- [Git](https://git-scm.com/)
+- [PowerShell 7](https://github.com/PowerShell/PowerShell) or later (for initialization script)
+- [Git](https://git-scm.com/) (including Git LFS if used)
+- [Dapr](https://dapr.io/) 
+- [Docker](https://www.docker.com/) (if running server projects)
 
-### Initializing the Package
+### Initialization
 
-### Git Submodules
+1.  **Clone the repository:**
+    ```bash
+    git clone --recurse-submodules https://github.com/Hexalith/Hexalith.IdentityStores.git
+    cd Hexalith.IdentityStores
+    ```
+    If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive`.
 
-This template uses the Hexalith.Builds repository as a Git submodule. For information about the build system and configuration, refer to the README files in the Hexalith.Builds directory.
+### Building the Code
+
+Build the entire solution using the .NET CLI:
+
+```bash
+dotnet build Hexalith.IdentityStores.sln
+```
 
 ## Development
+
+### Running Tests
+
+Execute tests using the .NET CLI:
+
+```bash
+dotnet test Hexalith.IdentityStores.sln
+```
+
+### Contributing
+
+Please refer to the contribution guidelines (if available) before submitting pull requests. Ensure code adheres to the project's coding standards and passes all tests.
 
 ## License
 

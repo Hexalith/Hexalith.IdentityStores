@@ -5,6 +5,7 @@
 
 namespace Hexalith.IdentityStores.UI.Helpers;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -36,6 +37,7 @@ public static class IdentityStoreMapExtensions
     /// <param name="endpoints">The endpoint route builder.</param>
     /// <returns>The endpoint convention builder.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the endpoints parameter is null.</exception>
+    [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1134:Attributes should not share line", Justification = "Map")]
     public static IEndpointConventionBuilder MapAdditionalIdentityEndpoints(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
@@ -44,47 +46,40 @@ public static class IdentityStoreMapExtensions
 
         _ = accountGroup.MapPost(
             "/PerformExternalLogin",
-    [AllowAnonymous]
-        (
-                HttpContext context,
-                [FromServices] SignInManager<CustomUser> signInManager,
-                [FromForm] string provider,
-                [FromForm] string returnUrl) =>
-        {
-            if (string.IsNullOrWhiteSpace(provider))
-            {
-                return Results.BadRequest("Invalid provider.");
-            }
+            [AllowAnonymous] (HttpContext context, [FromServices] SignInManager<CustomUser> signInManager, [FromForm] string provider, [FromForm] string returnUrl)
+                =>
+                {
+                    if (string.IsNullOrWhiteSpace(provider))
+                    {
+                        return Results.BadRequest("Invalid provider.");
+                    }
 
-            provider = TemporaryFluentButtonFix(provider);
-            IEnumerable<KeyValuePair<string, StringValues>> query = [
-                new("ReturnUrl", returnUrl),
-                new("Action", ExternalLogin.LoginCallbackAction)];
+                    provider = TemporaryFluentButtonFix(provider);
+                    IEnumerable<KeyValuePair<string, StringValues>> query = [
+                        new("ReturnUrl", returnUrl),
+                        new("Action", ExternalLogin.LoginCallbackAction)];
 
-            string redirectUrl = UriHelper.BuildRelative(
-                context.Request.PathBase,
-                "/Account/ExternalLogin",
-                QueryString.Create(query));
+                    string redirectUrl = UriHelper.BuildRelative(
+                        context.Request.PathBase,
+                        "/Account/ExternalLogin",
+                        QueryString.Create(query));
 
-            AuthenticationProperties properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return TypedResults.Challenge(properties, [provider]);
-        });
+                    AuthenticationProperties properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+                    return TypedResults.Challenge(properties, [provider]);
+                });
 
         _ = accountGroup.MapPost(
             "/Logout",
-    [AllowAnonymous]
-        async (
-            ClaimsPrincipal user,
-            SignInManager<CustomUser> signInManager,
-            [FromForm] string returnUrl) =>
-        {
-            if (user.Identity?.IsAuthenticated == true)
-            {
-                await signInManager.SignOutAsync();
-            }
+            [AllowAnonymous] async (ClaimsPrincipal user, SignInManager<CustomUser> signInManager, [FromForm] string returnUrl)
+                =>
+                {
+                    if (user.Identity?.IsAuthenticated == true)
+                    {
+                        await signInManager.SignOutAsync();
+                    }
 
-            return TypedResults.LocalRedirect($"~/{returnUrl}");
-        });
+                    return TypedResults.LocalRedirect($"~/{returnUrl}");
+                });
 
         RouteGroupBuilder manageGroup = accountGroup.MapGroup("/Manage").RequireAuthorization();
 
@@ -144,7 +139,7 @@ public static class IdentityStoreMapExtensions
 
             return context.Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.json")
                 ? TypedResults.File(fileBytes, contentType: "application/json", fileDownloadName: "PersonalData.json")
-                : TypedResults.LocalRedirect($"~/");
+                : TypedResults.LocalRedirect("~/");
         });
 
         return accountGroup;
@@ -157,10 +152,9 @@ public static class IdentityStoreMapExtensions
         string[] providers = provider.Split(',');
 
         // Find the value that appears twice in the list
-        provider = providers.GroupBy(p => p)
+        return providers.GroupBy(p => p)
                             .Where(g => g.Count() == 2)
                             .Select(g => g.Key)
                             .First();
-        return provider;
     }
 }

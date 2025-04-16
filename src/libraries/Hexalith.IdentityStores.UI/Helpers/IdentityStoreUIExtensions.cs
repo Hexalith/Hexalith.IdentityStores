@@ -5,17 +5,17 @@
 
 namespace Hexalith.IdentityStores.UI.Helpers;
 
+using Hexalith.IdentityStore.UI.Services;
 using Hexalith.IdentityStores.Helpers;
 using Hexalith.IdentityStores.Models;
 using Hexalith.IdentityStores.Stores;
-using Hexalith.IdentityStore.UI.Services;
+using Hexalith.IdentityStores.UI.Account;
 
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Hexalith.IdentityStores.UI.Account;
 
 /// <summary>
 /// Provides extension methods for mapping additional identity endpoints required by the Identity Razor components.

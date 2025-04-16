@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\libraries\Hexalith.IdentityStores.UI\Hexalith.IdentityStores.UI.csproj" />
     <ProjectReference Include="..\..\src\libraries\Hexalith.IdentityStores\Hexalith.IdentityStores.csproj" />
   </ItemGroup>
 

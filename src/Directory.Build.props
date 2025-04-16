@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <!-- Define a property to store the path of the parent Directory.Build.props. -->
+    <ParentDirectoryBuildProps>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</ParentDirectoryBuildProps>
+  </PropertyGroup>
+
+  <!-- Import the parent Directory.Build.props file if it exists -->
+  <Import Project="$(ParentDirectoryBuildProps)" Condition="Exists('$(ParentDirectoryBuildProps)')" />
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Hexalith.MyNewPackage.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+</Project>

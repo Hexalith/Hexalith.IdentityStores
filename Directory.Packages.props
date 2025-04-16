@@ -1,0 +1,7 @@
+﻿<Project>
+  <!-- Import the Directory.Package.props file in Hexalith.Builds. -->
+  <Import Project="$(MSBuildThisFileDirectory)Hexalith.Builds/Props/Directory.Packages.props" />
+  <ItemGroup>
+    <PackageVersion Include="Hexalith.NetAspire.Hosting" Version="1.1.0" />
+  </ItemGroup>
+</Project>

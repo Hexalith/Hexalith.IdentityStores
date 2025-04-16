@@ -26,6 +26,28 @@
 
 This repository contains the Hexalith Dapr Identity Stores components, providing functionalities related to user identity management, authentication, and authorization within the Hexalith ecosystem. It includes libraries, server implementations, and examples for integrating identity services into applications.
 
+## Dapr Integration
+
+[Dapr](https://dapr.io/) (Distributed Application Runtime) is a portable, event-driven runtime that makes it easy to build resilient, microservice-based applications. Hexalith.IdentityStores leverages Dapr's capabilities in the following ways:
+
+### Key Dapr Building Blocks Used
+
+- **State Management**: Identity data is persisted using Dapr's state management, allowing for pluggable storage providers (Redis, Azure CosmosDB, etc.)
+- **Service-to-Service Invocation**: Secure communication between identity services and consumers
+- **Pub/Sub Messaging**: Event-driven architecture for identity-related events (user created, role changed, etc.)
+- **Secrets Management**: Secure storage of sensitive identity configuration 
+
+### Benefits of Dapr in Hexalith.IdentityStores
+
+- **Platform Agnostic**: Runs on Kubernetes, VMs, or local development environments
+- **Pluggable Components**: Easily swap underlying infrastructure (databases, message queues) without code changes
+- **Language Independence**: Interact with identity services from any language or framework that supports HTTP/gRPC
+- **Built-in Resilience**: Circuit breaking, retries, and distributed tracing capabilities
+
+### Dapr Architecture in Hexalith.IdentityStores
+
+Identity data is stored in Dapr state stores while the authentication and authorization logic is implemented as Dapr services. Applications can interact with the identity services through standard Dapr APIs, using either the Dapr client SDKs or direct HTTP/gRPC calls.
+
 ## Repository Structure
 
 The repository is organized as follows:

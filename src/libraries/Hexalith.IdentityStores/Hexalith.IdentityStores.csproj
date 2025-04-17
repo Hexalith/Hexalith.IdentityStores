@@ -12,8 +12,12 @@
    <PackageReference Include="Hexalith.Infrastructure.DaprRuntime" />  
    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" />  
    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" />  
+   <PackageReference Include="Microsoft.Identity.Web" />  
  </ItemGroup>  
  <ItemGroup>  
    <ProjectReference Include="..\Hexalith.IdentityStores.Abstractions\Hexalith.IdentityStores.Abstractions.csproj" />  
+ </ItemGroup>  
+ <ItemGroup>
+   <Folder Include="Extensions\" />
  </ItemGroup>  
 </Project>

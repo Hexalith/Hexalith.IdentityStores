@@ -6,7 +6,6 @@
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
-@using Hexalith.IdentityStores.Extensions
 
 
 @inject SignInManager<CustomUser> SignInManager
@@ -118,9 +117,7 @@
             // Get the current user and sync roles from external provider
             var user = await UserManager.FindByLoginAsync(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey);
             if (user != null)
-            {
-                await UserManager.SyncExternalProviderRolesAsync(user, externalLoginInfo);
-                
+            {               
                 // Refresh the sign-in with updated roles
                 await SignInManager.RefreshSignInAsync(user);
             }
@@ -163,8 +160,6 @@
             {
                 Logger.LogInformation("User created an account using {Name} provider.", externalLoginInfo.LoginProvider);
 
-                // Sync roles from the external provider
-                await UserManager.SyncExternalProviderRolesAsync(user, externalLoginInfo);
 
                 var userId = await UserManager.GetUserIdAsync(user);
                 var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);

@@ -5,7 +5,6 @@
 
 namespace Hexalith.IdentityStores.Extensions;
 
-using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -30,7 +29,6 @@ public static class ExternalLoginExtensions
         CustomUser user,
         ExternalLoginInfo externalLoginInfo)
     {
-        Debugger.Break(); // TODO: Remove this breakpoint for debugging
         ArgumentNullException.ThrowIfNull(userManager);
         ArgumentNullException.ThrowIfNull(user);
         ArgumentNullException.ThrowIfNull(externalLoginInfo);

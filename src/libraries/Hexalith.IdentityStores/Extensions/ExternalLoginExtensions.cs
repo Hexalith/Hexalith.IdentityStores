@@ -5,6 +5,7 @@
 
 namespace Hexalith.IdentityStores.Extensions;
 
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -29,10 +30,10 @@ public static class ExternalLoginExtensions
         CustomUser user,
         ExternalLoginInfo externalLoginInfo)
     {
-        if (userManager == null || user == null || externalLoginInfo == null)
-        {
-            return;
-        }
+        Debugger.Break(); // TODO: Remove this breakpoint for debugging
+        ArgumentNullException.ThrowIfNull(userManager);
+        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(externalLoginInfo);
 
         // Get all role claims from the external provider
         IEnumerable<Claim> externalRoleClaims = externalLoginInfo.Principal.FindAll(claim =>
@@ -43,7 +44,7 @@ public static class ExternalLoginExtensions
 
         if (!externalRoleClaims.Any())
         {
-            return;
+            throw new InvalidOperationException("No role claims found in the external login information.");
         }
 
         // Get current user roles

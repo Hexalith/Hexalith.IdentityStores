@@ -15,8 +15,8 @@ using Hexalith.Infrastructure.DaprRuntime.Actors;
 
 /// <summary>
 /// Service for managing role identity names in a collection.
-/// This service handles the mapping between role IDs and their rolenames using Dapr actors.
-/// It provides functionality to add, find, and remove rolename-to-roleId mappings.
+/// This service handles the mapping between role IDs and their role names using Dapr actors.
+/// It provides functionality to add, find, and remove role name-to-roleId mappings.
 /// </summary>
 /// <remarks>
 /// Initializes a new instance of the <see cref="RoleNameIndexService"/> class.
@@ -25,31 +25,33 @@ using Hexalith.Infrastructure.DaprRuntime.Actors;
 /// <param name="factory">The Dapr actor host providing actor management capabilities.</param>
 public class RoleNameIndexService(IActorProxyFactory factory) : IRoleNameIndexService
 {
-    // Factory function to create key-value actors for rolename indexing
+    /// <summary>
+    /// Factory function to create key-value actors for role name indexing.
+    /// </summary>
     private readonly Func<string, IKeyValueActor> _keyValueActor = factory.CreateRoleNameIndexProxy;
 
     /// <summary>
-    /// Associates a role ID with a rolename in the actor state store.
+    /// Associates a role ID with a role name in the actor state store.
     /// </summary>
-    /// <param name="name">The rolename to associate with the role.</param>
+    /// <param name="name">The role name to associate with the role.</param>
     /// <param name="roleId">The role's unique identifier.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task AddAsync(string name, string roleId)
-        => await _keyValueActor(name).SetAsync(roleId);
+        => await _keyValueActor(name).SetAsync(roleId).ConfigureAwait(false);
 
     /// <summary>
-    /// Retrieves a role ID associated with the given rolename.
+    /// Retrieves a role ID associated with the given role name.
     /// </summary>
-    /// <param name="name">The rolename to look up.</param>
+    /// <param name="name">The role name to look up.</param>
     /// <returns>The associated role ID if found; otherwise, null.</returns>
     public async Task<string?> FindRoleIdAsync(string name)
-        => await _keyValueActor(name).GetAsync();
+        => await _keyValueActor(name).GetAsync().ConfigureAwait(false);
 
     /// <summary>
-    /// Removes the association between a role ID and a rolename.
+    /// Removes the association between a role ID and a role name.
     /// </summary>
-    /// <param name="name">The rolename to remove.</param>
+    /// <param name="name">The role name to remove.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task RemoveAsync(string name)
-        => await _keyValueActor(name).RemoveAsync();
+        => await _keyValueActor(name).RemoveAsync().ConfigureAwait(false);
 }

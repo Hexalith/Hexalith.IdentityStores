@@ -34,7 +34,9 @@ public partial class RoleActor(
     /// </summary>
     private readonly IRoleCollectionService _collectionService = collectionService;
 
-    // Manages the main role collection
+    /// <summary>
+    /// Manages the main role collection.
+    /// </summary>
     private readonly IRoleNameIndexService _nameCollectionService = nameIndexService;
 
     // Manages name-based indexing
@@ -91,15 +93,15 @@ public partial class RoleActor(
         _state = new RoleActorState { Role = role };
 
         // Save role state
-        await StateManager.AddStateAsync(IdentityStoresConstants.RoleStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.AddStateAsync(IdentityStoresConstants.RoleStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
 
-        await _collectionService.AddAsync(role.Id);
+        await _collectionService.AddAsync(role.Id).ConfigureAwait(false);
 
         // Create name index if name exists
         if (!string.IsNullOrWhiteSpace(role.NormalizedName))
         {
-            await _nameCollectionService.AddAsync(role.NormalizedName, role.Id);
+            await _nameCollectionService.AddAsync(role.NormalizedName, role.Id).ConfigureAwait(false);
         }
 
         return true;
@@ -113,30 +115,30 @@ public partial class RoleActor(
     public async Task DeleteAsync()
     {
         string id = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is not null)
         {
             // Remove name index
             if (!string.IsNullOrWhiteSpace(_state.Role.NormalizedName))
             {
-                await _nameCollectionService.RemoveAsync(_state.Role.NormalizedName);
+                await _nameCollectionService.RemoveAsync(_state.Role.NormalizedName).ConfigureAwait(false);
             }
 
             // Clear state
             _state = null;
-            await StateManager.RemoveStateAsync(IdentityStoresConstants.RoleStateName, CancellationToken.None);
-            await StateManager.SaveStateAsync(CancellationToken.None);
+            await StateManager.RemoveStateAsync(IdentityStoresConstants.RoleStateName, CancellationToken.None).ConfigureAwait(false);
+            await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         // Remove from indexes
-        await _collectionService.RemoveAsync(id);
+        await _collectionService.RemoveAsync(id).ConfigureAwait(false);
     }
 
     /// <summary>
     /// Checks if the role exists in the state store.
     /// </summary>
     /// <returns>True if role exists, false otherwise.</returns>
-    public async Task<bool> ExistsAsync() => await GetStateAsync(CancellationToken.None) != null;
+    public async Task<bool> ExistsAsync() => await GetStateAsync(CancellationToken.None).ConfigureAwait(false) != null;
 
     /// <summary>
     /// Retrieves a role's identity information.
@@ -144,7 +146,7 @@ public partial class RoleActor(
     /// <returns>The role identity if found, null otherwise.</returns>
     public async Task<CustomRole?> FindAsync()
     {
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         return _state?.Role;
     }
 
@@ -158,7 +160,7 @@ public partial class RoleActor(
     public async Task UpdateAsync(CustomRole role)
     {
         ArgumentNullException.ThrowIfNull(role);
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Update Failed : Role '{role.Id}' not found.");
@@ -167,20 +169,20 @@ public partial class RoleActor(
         // Update role state
         CustomRole oldRole = _state.Role;
         _state.Role = role;
-        await StateManager.SetStateAsync(IdentityStoresConstants.RoleStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.SetStateAsync(IdentityStoresConstants.RoleStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
 
         // Update name index
         if (oldRole.NormalizedName != role.NormalizedName)
         {
             if (!string.IsNullOrWhiteSpace(oldRole.NormalizedName))
             {
-                await _nameCollectionService.RemoveAsync(oldRole.NormalizedName);
+                await _nameCollectionService.RemoveAsync(oldRole.NormalizedName).ConfigureAwait(false);
             }
 
             if (!string.IsNullOrWhiteSpace(role.NormalizedName))
             {
-                await _nameCollectionService.AddAsync(role.NormalizedName, role.Id);
+                await _nameCollectionService.AddAsync(role.NormalizedName, role.Id).ConfigureAwait(false);
             }
         }
     }
@@ -195,7 +197,7 @@ public partial class RoleActor(
     {
         if (_state is null)
         {
-            ConditionalValue<RoleActorState> result = await StateManager.TryGetStateAsync<RoleActorState>(IdentityStoresConstants.RoleStateName, cancellationToken);
+            ConditionalValue<RoleActorState> result = await StateManager.TryGetStateAsync<RoleActorState>(IdentityStoresConstants.RoleStateName, cancellationToken).ConfigureAwait(false);
             if (result.HasValue)
             {
                 _state = result.Value;

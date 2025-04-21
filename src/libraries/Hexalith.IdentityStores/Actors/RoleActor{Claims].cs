@@ -27,7 +27,7 @@ public partial class RoleActor
     public async Task AddClaimsAsync(IEnumerable<Claim> claims)
     {
         string roleId = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Add {nameof(claims)} failed : Role '{roleId}' not found.");
@@ -40,11 +40,11 @@ public partial class RoleActor
 
         foreach (Claim claim in claims)
         {
-            await _claimIndexService.AddAsync(claim, roleId, CancellationToken.None);
+            await _claimIndexService.AddAsync(claim, roleId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        await StateManager.SetStateAsync(IdentityStoresConstants.RoleStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.SetStateAsync(IdentityStoresConstants.RoleStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -55,7 +55,7 @@ public partial class RoleActor
     /// <exception cref="InvalidOperationException">When role not found.</exception>
     public async Task<IEnumerable<Claim>> GetClaimsAsync()
     {
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         return _state is null
             ? throw new InvalidOperationException($"Get claims Failed : Role '{Id.ToUnescapeString()}' not found.")
             : _state.Claims
@@ -71,7 +71,7 @@ public partial class RoleActor
     public async Task RemoveClaimsAsync(IEnumerable<Claim> claims)
     {
         string roleId = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Remove {nameof(claims)} failed : Role '{roleId}' not found.");
@@ -83,11 +83,11 @@ public partial class RoleActor
 
         foreach (Claim claim in claims)
         {
-            await _claimIndexService.RemoveAsync(claim, roleId, CancellationToken.None);
+            await _claimIndexService.RemoveAsync(claim, roleId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        await StateManager.SetStateAsync(IdentityStoresConstants.RoleStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.SetStateAsync(IdentityStoresConstants.RoleStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public partial class RoleActor
         ArgumentNullException.ThrowIfNull(claim);
         ArgumentNullException.ThrowIfNull(newClaim);
         string roleId = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Replace {nameof(claim)} failed : Role '{roleId}' not found.");
@@ -122,10 +122,10 @@ public partial class RoleActor
             }
             ]);
 
-        await _claimIndexService.RemoveAsync(claim, roleId, CancellationToken.None);
-        await _claimIndexService.AddAsync(newClaim, roleId, CancellationToken.None);
+        await _claimIndexService.RemoveAsync(claim, roleId, CancellationToken.None).ConfigureAwait(false);
+        await _claimIndexService.AddAsync(newClaim, roleId, CancellationToken.None).ConfigureAwait(false);
 
-        await StateManager.SetStateAsync(IdentityStoresConstants.RoleStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.SetStateAsync(IdentityStoresConstants.RoleStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
     }
 }

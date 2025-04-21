@@ -57,7 +57,7 @@ public partial class DaprActorUserStore
         ThrowIfDisposed();
 
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(user.Id);
-        bool created = await actor.CreateAsync(user);
+        bool created = await actor.CreateAsync(user).ConfigureAwait(false);
         return created ? IdentityResult.Success : IdentityResult.Failed(ErrorDescriber.DuplicateUserName(user.NormalizedUserName ?? "Unknown"));
     }
 
@@ -69,7 +69,7 @@ public partial class DaprActorUserStore
         ThrowIfDisposed();
 
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(user.Id);
-        await actor.DeleteAsync();
+        await actor.DeleteAsync().ConfigureAwait(false);
         return IdentityResult.Success;
     }
 
@@ -81,8 +81,8 @@ public partial class DaprActorUserStore
         ThrowIfDisposed();
 
         IKeyValueActor actor = ActorProxy.DefaultProxyFactory.CreateUserEmailIndexProxy(normalizedEmail);
-        string? userId = await actor.GetAsync();
-        return string.IsNullOrWhiteSpace(userId) ? null : await FindByIdAsync(userId, cancellationToken);
+        string? userId = await actor.GetAsync().ConfigureAwait(false);
+        return string.IsNullOrWhiteSpace(userId) ? null : await FindByIdAsync(userId, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -93,7 +93,7 @@ public partial class DaprActorUserStore
         ThrowIfDisposed();
 
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(userId);
-        return await actor.FindAsync();
+        return await actor.FindAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -104,8 +104,8 @@ public partial class DaprActorUserStore
         ThrowIfDisposed();
 
         IKeyValueActor actor = ActorProxy.DefaultProxyFactory.CreateUserNameIndexProxy(normalizedUserName);
-        string? userId = await actor.GetAsync();
-        return string.IsNullOrWhiteSpace(userId) ? null : await FindByIdAsync(userId, cancellationToken);
+        string? userId = await actor.GetAsync().ConfigureAwait(false);
+        return string.IsNullOrWhiteSpace(userId) ? null : await FindByIdAsync(userId, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -114,13 +114,13 @@ public partial class DaprActorUserStore
         ArgumentNullException.ThrowIfNull(user);
         cancellationToken.ThrowIfCancellationRequested();
         ThrowIfDisposed();
-        if (await FindByIdAsync(user.Id, cancellationToken) == null)
+        if (await FindByIdAsync(user.Id, cancellationToken).ConfigureAwait(false) == null)
         {
             return IdentityResult.Failed(new IdentityError { Code = "UserNotFound", Description = $"A user with the Id '{user.Id}' could not be found." });
         }
 
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(user.Id);
-        await actor.UpdateAsync(user);
+        await actor.UpdateAsync(user).ConfigureAwait(false);
         return IdentityResult.Success;
     }
 
@@ -130,7 +130,7 @@ public partial class DaprActorUserStore
         ArgumentNullException.ThrowIfNull(userId);
         cancellationToken.ThrowIfCancellationRequested();
         ThrowIfDisposed();
-        return await FindByIdAsync(userId, cancellationToken);
+        return await FindByIdAsync(userId, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -140,7 +140,7 @@ public partial class DaprActorUserStore
     private async Task<List<CustomUser>> GetUsersAsync()
     {
         ThrowIfDisposed();
-        IEnumerable<string> userIds = await _userCollection.AllAsync();
+        IEnumerable<string> userIds = await _userCollection.AllAsync().ConfigureAwait(false);
         List<Task<CustomUser?>> tasks = [];
         foreach (string userId in userIds)
         {
@@ -148,6 +148,6 @@ public partial class DaprActorUserStore
             tasks.Add(userProxy.FindAsync());
         }
 
-        return [.. (await Task.WhenAll(tasks)).Where(p => p != null).OfType<CustomUser>()];
+        return [.. (await Task.WhenAll(tasks).ConfigureAwait(false)).Where(p => p != null).OfType<CustomUser>()];
     }
 }

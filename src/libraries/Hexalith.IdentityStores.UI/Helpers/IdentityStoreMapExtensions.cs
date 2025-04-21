@@ -75,7 +75,7 @@ public static class IdentityStoreMapExtensions
                 {
                     if (user.Identity?.IsAuthenticated == true)
                     {
-                        await signInManager.SignOutAsync();
+                        await signInManager.SignOutAsync().ConfigureAwait(false);
                     }
 
                     return TypedResults.LocalRedirect($"~/{returnUrl}");
@@ -91,7 +91,7 @@ public static class IdentityStoreMapExtensions
             provider = TemporaryFluentButtonFix(provider);
 
             // Clear the existing external cookie to ensure a clean login process
-            await context.SignOutAsync(IdentityConstants.ExternalScheme);
+            await context.SignOutAsync(IdentityConstants.ExternalScheme).ConfigureAwait(false);
 
             string redirectUrl = UriHelper.BuildRelative(
                 context.Request.PathBase,
@@ -110,13 +110,13 @@ public static class IdentityStoreMapExtensions
             [FromServices] UserManager<CustomUser> userManager,
             [FromServices] AuthenticationStateProvider _) =>
         {
-            CustomUser? user = await userManager.GetUserAsync(context.User);
+            CustomUser? user = await userManager.GetUserAsync(context.User).ConfigureAwait(false);
             if (user is null)
             {
                 return Results.NotFound($"Unable to load user with ID '{userManager.GetUserId(context.User)}'.");
             }
 
-            string userId = await userManager.GetUserIdAsync(user);
+            string userId = await userManager.GetUserIdAsync(user).ConfigureAwait(false);
             downloadLogger.LogInformation("User with ID '{UserId}' asked for their personal data.", userId);
 
             // Only include personal data for download
@@ -128,13 +128,13 @@ public static class IdentityStoreMapExtensions
                 personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
             }
 
-            IList<UserLoginInfo> logins = await userManager.GetLoginsAsync(user);
+            IList<UserLoginInfo> logins = await userManager.GetLoginsAsync(user).ConfigureAwait(false);
             foreach (UserLoginInfo l in logins)
             {
                 personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
             }
 
-            personalData.Add("Authenticator Key", (await userManager.GetAuthenticatorKeyAsync(user))!);
+            personalData.Add("Authenticator Key", (await userManager.GetAuthenticatorKeyAsync(user).ConfigureAwait(false))!);
             byte[] fileBytes = JsonSerializer.SerializeToUtf8Bytes(personalData);
 
             return context.Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.json")

@@ -26,11 +26,11 @@ public class RoleCollectionService(IActorProxyFactory actorHost) : IRoleCollecti
     private readonly IKeyHashActor _keyHashActor = actorHost.CreateAllRolesProxy();
 
     /// <inheritdoc/>
-    public async Task AddAsync(string id) => await _keyHashActor.AddAsync(id);
+    public async Task AddAsync(string id) => await _keyHashActor.AddAsync(id).ConfigureAwait(false);
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<string>> AllAsync() => await _keyHashActor.AllAsync(0, 0);
+    public async Task<IEnumerable<string>> AllAsync() => await _keyHashActor.AllAsync(0, 0).ConfigureAwait(false);
 
     /// <inheritdoc/>
-    public async Task RemoveAsync(string id) => await _keyHashActor.RemoveAsync(id);
+    public async Task RemoveAsync(string id) => await _keyHashActor.RemoveAsync(id).ConfigureAwait(false);
 }

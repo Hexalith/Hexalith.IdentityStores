@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Identity;
 /// <summary>
 /// Represents login information and source for a user record.
 /// </summary>
+/// <param name="LoginProvider">The login provider.</param>
+/// <param name="ProviderKey">The unique key for the provider.</param>
+/// <param name="DisplayName">The display name for the login provider.</param>
 [DataContract]
 public record CustomUserLoginInfo(
     [property: DataMember(Order = 1)] string LoginProvider,

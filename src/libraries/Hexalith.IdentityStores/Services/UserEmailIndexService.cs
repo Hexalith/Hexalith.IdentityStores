@@ -24,7 +24,9 @@ using Hexalith.Infrastructure.DaprRuntime.Actors;
 /// <param name="factory">The Dapr actor host providing actor management capabilities.</param>
 public class UserEmailIndexService(IActorProxyFactory factory) : IUserEmailIndexService
 {
-    // Factory function to create key-value actors for email indexing
+    /// <summary>
+    /// Factory function to create key-value actors for email indexing.
+    /// </summary>
     private readonly Func<string, IKeyValueActor> _keyValueActor = factory.CreateUserEmailIndexProxy;
 
     /// <summary>
@@ -33,19 +35,19 @@ public class UserEmailIndexService(IActorProxyFactory factory) : IUserEmailIndex
     /// <param name="email">The email address to associate with the user.</param>
     /// <param name="userId">The user's unique identifier.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public async Task AddAsync(string email, string userId) => await _keyValueActor(email).SetAsync(userId);
+    public async Task AddAsync(string email, string userId) => await _keyValueActor(email).SetAsync(userId).ConfigureAwait(false);
 
     /// <summary>
     /// Retrieves a user ID associated with the given email address.
     /// </summary>
     /// <param name="email">The email address to look up.</param>
     /// <returns>The associated user ID if found; otherwise, null.</returns>
-    public async Task<string?> FindUserIdAsync(string email) => await _keyValueActor(email).GetAsync();
+    public async Task<string?> FindUserIdAsync(string email) => await _keyValueActor(email).GetAsync().ConfigureAwait(false);
 
     /// <summary>
     /// Removes the association between a user ID and an email address.
     /// </summary>
     /// <param name="email">The email address to remove.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public async Task RemoveAsync(string email) => await _keyValueActor(email).RemoveAsync();
+    public async Task RemoveAsync(string email) => await _keyValueActor(email).RemoveAsync().ConfigureAwait(false);
 }

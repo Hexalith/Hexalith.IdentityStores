@@ -25,7 +25,9 @@ using Hexalith.Infrastructure.DaprRuntime.Actors;
 /// <param name="factory">The Dapr actor host providing actor management capabilities.</param>
 public class UserNameIndexService(IActorProxyFactory factory) : IUserNameIndexService
 {
-    // Factory function to create key-value actors for username indexing
+    /// <summary>
+    /// Factory function to create key-value actors for username indexing.
+    /// </summary>
     private readonly Func<string, IKeyValueActor> _keyValueActor = factory.CreateUserNameIndexProxy;
 
     /// <summary>
@@ -35,7 +37,7 @@ public class UserNameIndexService(IActorProxyFactory factory) : IUserNameIndexSe
     /// <param name="userId">The user's unique identifier.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task AddAsync(string name, string userId)
-        => await _keyValueActor(name).SetAsync(userId);
+        => await _keyValueActor(name).SetAsync(userId).ConfigureAwait(false);
 
     /// <summary>
     /// Retrieves a user ID associated with the given username.
@@ -43,7 +45,7 @@ public class UserNameIndexService(IActorProxyFactory factory) : IUserNameIndexSe
     /// <param name="name">The username to look up.</param>
     /// <returns>The associated user ID if found; otherwise, null.</returns>
     public async Task<string?> FindUserIdAsync(string name)
-        => await _keyValueActor(name).GetAsync();
+        => await _keyValueActor(name).GetAsync().ConfigureAwait(false);
 
     /// <summary>
     /// Removes the association between a user ID and a username.
@@ -51,5 +53,5 @@ public class UserNameIndexService(IActorProxyFactory factory) : IUserNameIndexSe
     /// <param name="name">The username to remove.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task RemoveAsync(string name)
-        => await _keyValueActor(name).RemoveAsync();
+        => await _keyValueActor(name).RemoveAsync().ConfigureAwait(false);
 }

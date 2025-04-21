@@ -34,7 +34,7 @@ public partial class DaprActorUserStore
 
         ThrowIfDisposed();
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(user.Id);
-        await actor.AddLoginAsync(CustomUserLoginInfo.Create(login));
+        await actor.AddLoginAsync(CustomUserLoginInfo.Create(login)).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -45,7 +45,7 @@ public partial class DaprActorUserStore
 
         ThrowIfDisposed();
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(user.Id);
-        return [.. (await actor.GetLoginsAsync()).Select(p => p.UserLoginInfo)];
+        return [.. (await actor.GetLoginsAsync().ConfigureAwait(false)).Select(p => p.UserLoginInfo)];
     }
 
     /// <inheritdoc/>
@@ -57,7 +57,7 @@ public partial class DaprActorUserStore
 
         ThrowIfDisposed();
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(user.Id);
-        await actor.RemoveLoginAsync(loginProvider, providerKey);
+        await actor.RemoveLoginAsync(loginProvider, providerKey).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -68,7 +68,7 @@ public partial class DaprActorUserStore
         ArgumentException.ThrowIfNullOrWhiteSpace(userId);
         ThrowIfDisposed();
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(userId);
-        return await actor.FindLoginAsync(loginProvider, providerKey);
+        return await actor.FindLoginAsync(loginProvider, providerKey).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -77,7 +77,7 @@ public partial class DaprActorUserStore
         ArgumentException.ThrowIfNullOrWhiteSpace(loginProvider);
         ArgumentException.ThrowIfNullOrWhiteSpace(providerKey);
 
-        string? userId = await _loginCollectionService.FindUserIdAsync(loginProvider, providerKey);
+        string? userId = await _loginCollectionService.FindUserIdAsync(loginProvider, providerKey).ConfigureAwait(false);
 
         if (string.IsNullOrWhiteSpace(userId))
         {
@@ -85,7 +85,7 @@ public partial class DaprActorUserStore
         }
 
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(userId);
-        CustomUserLogin? result = await actor.FindLoginAsync(loginProvider, providerKey);
+        CustomUserLogin? result = await actor.FindLoginAsync(loginProvider, providerKey).ConfigureAwait(false);
         if (result is not null)
         {
             result.UserId = userId;

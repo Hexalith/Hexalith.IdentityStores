@@ -31,7 +31,7 @@ public class RoleClaimsIndexService(
         ArgumentNullException.ThrowIfNull(claimValue);
         ArgumentNullException.ThrowIfNull(roleId);
 
-        _ = await _keyValueActor(claimType, claimValue).AddAsync(roleId);
+        _ = await _keyValueActor(claimType, claimValue).AddAsync(roleId).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -57,7 +57,7 @@ public class RoleClaimsIndexService(
         ArgumentNullException.ThrowIfNull(claimType);
         ArgumentNullException.ThrowIfNull(claimValue);
 
-        return await _keyValueActor(claimType, claimValue).AllAsync(0, 0);
+        return await _keyValueActor(claimType, claimValue).AllAsync(0, 0).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -76,6 +76,6 @@ public class RoleClaimsIndexService(
         ArgumentNullException.ThrowIfNull(claimValue);
         ArgumentNullException.ThrowIfNull(roleId);
 
-        await _keyValueActor(claimType, claimValue).RemoveAsync(roleId);
+        await _keyValueActor(claimType, claimValue).RemoveAsync(roleId).ConfigureAwait(false);
     }
 }

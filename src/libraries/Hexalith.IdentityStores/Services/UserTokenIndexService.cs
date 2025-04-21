@@ -22,7 +22,9 @@ using Hexalith.Infrastructure.DaprRuntime.Actors;
 /// <param name="factory">The actor proxy factory.</param>
 public class UserTokenIndexService(IActorProxyFactory factory) : IUserTokenIndexService
 {
-    // Factory function to create key-value actors for login indexing
+    /// <summary>
+    /// Factory function to create key-value actors for login indexing.
+    /// </summary>
     private readonly Func<string, string, IKeyValueActor> _keyValueActor = factory.CreateUserTokenIndexProxy;
 
     /// <inheritdoc/>

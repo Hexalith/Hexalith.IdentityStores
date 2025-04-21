@@ -28,7 +28,7 @@ public class UserClaimsIndexService(
         ArgumentNullException.ThrowIfNull(claimType);
         ArgumentNullException.ThrowIfNull(userId);
 
-        _ = await _keyValueActor(claimType, claimValue).AddAsync(userId);
+        _ = await _keyValueActor(claimType, claimValue).AddAsync(userId).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -36,7 +36,7 @@ public class UserClaimsIndexService(
     {
         ArgumentNullException.ThrowIfNull(claimType);
 
-        return await _keyValueActor(claimType, claimValue).AllAsync(0, 0);
+        return await _keyValueActor(claimType, claimValue).AllAsync(0, 0).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -45,6 +45,6 @@ public class UserClaimsIndexService(
         ArgumentNullException.ThrowIfNull(claimType);
         ArgumentNullException.ThrowIfNull(userId);
 
-        await _keyValueActor(claimType, claimValue).RemoveAsync(userId);
+        await _keyValueActor(claimType, claimValue).RemoveAsync(userId).ConfigureAwait(false);
     }
 }

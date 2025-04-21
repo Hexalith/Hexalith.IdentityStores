@@ -21,10 +21,11 @@ public partial class UserActor
     /// </summary>
     /// <param name="login">Login information containing provider and key.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <exception cref="InvalidOperationException">When user not found.</exception>
     public async Task AddLoginAsync(CustomUserLoginInfo login)
     {
         string userId = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Add login failed : User '{userId}' not found.");
@@ -35,10 +36,10 @@ public partial class UserActor
             .Where(p => p.LoginProvider != login.LoginProvider || p.ProviderKey != login.ProviderKey)
             .Append(login);
 
-        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
 
-        await _loginIndexService.AddAsync(login.LoginProvider, login.ProviderKey, userId);
+        await _loginIndexService.AddAsync(login.LoginProvider, login.ProviderKey, userId).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -47,9 +48,10 @@ public partial class UserActor
     /// <param name="loginProvider">Name of the login provider.</param>
     /// <param name="providerKey">Unique key from the provider.</param>
     /// <returns>Login information if found, null otherwise.</returns>
+    /// <exception cref="InvalidOperationException">When user not found.</exception>
     public async Task<CustomUserLogin?> FindLoginAsync(string loginProvider, string providerKey)
     {
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         return _state is null
             ? throw new InvalidOperationException($"Find login failed : User '{Id.ToUnescapeString()}' not found.")
             : _state.Logins
@@ -65,7 +67,7 @@ public partial class UserActor
     /// <exception cref="InvalidOperationException">When user not found.</exception>
     public async Task<IEnumerable<CustomUserLoginInfo>> GetLoginsAsync()
     {
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         return (_state
                 ?? throw new InvalidOperationException($"Get logins failed : User '{Id.ToUnescapeString()}' not found."))
             .Logins;
@@ -81,15 +83,15 @@ public partial class UserActor
     public async Task RemoveLoginAsync(string loginProvider, string providerKey)
     {
         string userId = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Remove login Failed : User '{userId}' not found.");
         }
 
         _state.Logins = _state.Logins.Where(p => p.ProviderKey != providerKey || p.LoginProvider != loginProvider);
-        await _loginIndexService.RemoveAsync(loginProvider, providerKey);
-        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await _loginIndexService.RemoveAsync(loginProvider, providerKey).ConfigureAwait(false);
+        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
     }
 }

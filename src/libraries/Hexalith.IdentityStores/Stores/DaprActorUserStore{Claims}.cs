@@ -32,7 +32,7 @@ public partial class DaprActorUserStore
         ThrowIfDisposed();
 
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(user.Id);
-        await actor.AddClaimsAsync(claims.Select(p => new CustomUserClaim { ClaimType = p.Type, ClaimValue = p.Value, UserId = user.Id }));
+        await actor.AddClaimsAsync(claims.Select(p => new CustomUserClaim { ClaimType = p.Type, ClaimValue = p.Value, UserId = user.Id })).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -43,7 +43,7 @@ public partial class DaprActorUserStore
         ThrowIfDisposed();
 
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(user.Id);
-        return [.. (await actor.GetClaimsAsync()).Select(p => p.ToClaim())];
+        return [.. (await actor.GetClaimsAsync().ConfigureAwait(false)).Select(p => p.ToClaim())];
     }
 
     /// <inheritdoc/>
@@ -53,14 +53,14 @@ public partial class DaprActorUserStore
         cancellationToken.ThrowIfCancellationRequested();
         ThrowIfDisposed();
 
-        IEnumerable<string> allUsers = await _userCollection.AllAsync();
+        IEnumerable<string> allUsers = await _userCollection.AllAsync().ConfigureAwait(false);
         List<Task<CustomUser?>> userTasks = [];
         foreach (string userId in allUsers)
         {
             userTasks.Add(GetUserIfHasClaimAsync(claim, userId));
         }
 
-        return [.. (await Task.WhenAll(userTasks))
+        return [.. (await Task.WhenAll(userTasks).ConfigureAwait(false))
             .Where(p => p != null)
             .Select(p => p!)];
     }
@@ -73,7 +73,7 @@ public partial class DaprActorUserStore
         ThrowIfDisposed();
 
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(user.Id);
-        await actor.RemoveClaimsAsync(claims.Select(p => new CustomUserClaim { ClaimType = p.Type, ClaimValue = p.Value }));
+        await actor.RemoveClaimsAsync(claims.Select(p => new CustomUserClaim { ClaimType = p.Type, ClaimValue = p.Value })).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -86,16 +86,16 @@ public partial class DaprActorUserStore
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(user.Id);
         await actor.ReplaceClaimAsync(
             new CustomUserClaim { ClaimType = claim.Type, ClaimValue = claim.Value },
-            new CustomUserClaim { ClaimType = newClaim.Type, ClaimValue = newClaim.Value });
+            new CustomUserClaim { ClaimType = newClaim.Type, ClaimValue = newClaim.Value }).ConfigureAwait(false);
     }
 
     private static async Task<CustomUser?> GetUserIfHasClaimAsync(Claim claim, string userId)
     {
         IUserActor collection = ActorProxy.DefaultProxyFactory.CreateUserActor(userId);
-        if ((await collection.GetClaimsAsync()).Any(p => p.ClaimType == claim.Type && p.ClaimValue == claim.Value))
+        if ((await collection.GetClaimsAsync().ConfigureAwait(false)).Any(p => p.ClaimType == claim.Type && p.ClaimValue == claim.Value))
         {
             IUserActor userActor = ActorProxy.DefaultProxyFactory.CreateUserActor(userId);
-            return await userActor.FindAsync();
+            return await userActor.FindAsync().ConfigureAwait(false);
         }
 
         return null;

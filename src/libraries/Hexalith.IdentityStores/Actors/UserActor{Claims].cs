@@ -20,7 +20,7 @@ public partial class UserActor
     public async Task AddClaimsAsync(IEnumerable<CustomUserClaim> userClaims)
     {
         string userId = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Add {nameof(userClaims)} failed : User '{userId}' not found.");
@@ -30,17 +30,17 @@ public partial class UserActor
 
         foreach (CustomUserClaim claim in userClaims.Where(p => p.ClaimType is not null))
         {
-            await _claimIndexService.AddAsync(claim.ClaimType!, claim.ClaimValue, userId, CancellationToken.None);
+            await _claimIndexService.AddAsync(claim.ClaimType!, claim.ClaimValue, userId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
     public async Task<IEnumerable<CustomUserClaim>> GetClaimsAsync()
     {
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         return _state is null
             ? throw new InvalidOperationException($"Get claims Failed : User '{Id.ToUnescapeString()}' not found.")
             : _state.Claims;
@@ -55,7 +55,7 @@ public partial class UserActor
     public async Task RemoveClaimsAsync(IEnumerable<CustomUserClaim> claims)
     {
         string userId = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Remove {nameof(claims)} failed : User '{userId}' not found.");
@@ -67,11 +67,11 @@ public partial class UserActor
 
         foreach (CustomUserClaim claim in claims.Where(p => p.ClaimType is not null))
         {
-            await _claimIndexService.RemoveAsync(claim.ClaimType!, claim.ClaimValue, userId, CancellationToken.None);
+            await _claimIndexService.RemoveAsync(claim.ClaimType!, claim.ClaimValue, userId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public partial class UserActor
         ArgumentNullException.ThrowIfNull(claim.ClaimType);
         ArgumentNullException.ThrowIfNull(newClaim.ClaimType);
         string userId = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Replace {nameof(claim)} failed : User '{userId}' not found.");
@@ -102,10 +102,10 @@ public partial class UserActor
             .Where(p => p.ClaimType != claim.ClaimType || p.ClaimValue != claim.ClaimValue)
             .Union([newClaim]);
 
-        await _claimIndexService.RemoveAsync(claim.ClaimType, claim.ClaimValue, userId, CancellationToken.None);
-        await _claimIndexService.AddAsync(newClaim.ClaimType, newClaim.ClaimValue, userId, CancellationToken.None);
+        await _claimIndexService.RemoveAsync(claim.ClaimType, claim.ClaimValue, userId, CancellationToken.None).ConfigureAwait(false);
+        await _claimIndexService.AddAsync(newClaim.ClaimType, newClaim.ClaimValue, userId, CancellationToken.None).ConfigureAwait(false);
 
-        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
     }
 }

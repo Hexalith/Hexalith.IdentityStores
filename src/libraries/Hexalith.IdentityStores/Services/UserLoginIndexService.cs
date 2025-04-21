@@ -25,18 +25,20 @@ using Hexalith.Infrastructure.DaprRuntime.Actors;
 /// <param name="factory">The Dapr actor host providing actor management capabilities.</param>
 public class UserLoginIndexService(IActorProxyFactory factory) : IUserLoginIndexService
 {
-    // Factory function to create key-value actors for login indexing
+    /// <summary>
+    /// Factory function to create key-value actors for login indexing.
+    /// </summary>
     private readonly Func<string, string, IKeyValueActor> _keyValueActor = factory.CreateUserLoginIndexProxy;
 
     /// <inheritdoc/>
     public async Task AddAsync(string loginProvider, string providerKey, string userId) =>
-        await _keyValueActor(loginProvider, providerKey).SetAsync(userId);
+        await _keyValueActor(loginProvider, providerKey).SetAsync(userId).ConfigureAwait(false);
 
     /// <inheritdoc/>
     public async Task<string?> FindUserIdAsync(string loginProvider, string providerKey) =>
-        await _keyValueActor(loginProvider, providerKey).GetAsync();
+        await _keyValueActor(loginProvider, providerKey).GetAsync().ConfigureAwait(false);
 
     /// <inheritdoc/>
     public async Task RemoveAsync(string loginProvider, string providerKey)
-        => await _keyValueActor(loginProvider, providerKey).RemoveAsync();
+        => await _keyValueActor(loginProvider, providerKey).RemoveAsync().ConfigureAwait(false);
 }

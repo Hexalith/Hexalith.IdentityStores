@@ -31,7 +31,7 @@ public partial class DaprActorUserStore
         ArgumentException.ThrowIfNullOrWhiteSpace(token.UserId);
         ThrowIfDisposed();
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(token.UserId);
-        await actor.AddTokenAsync(token);
+        await actor.AddTokenAsync(token).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -42,7 +42,7 @@ public partial class DaprActorUserStore
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ThrowIfDisposed();
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(user.Id);
-        return await actor.GetTokenAsync(loginProvider, name);
+        return await actor.GetTokenAsync(loginProvider, name).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -54,6 +54,6 @@ public partial class DaprActorUserStore
         ArgumentException.ThrowIfNullOrWhiteSpace(token.UserId);
         ThrowIfDisposed();
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(token.UserId);
-        await actor.RemoveTokenAsync(token.LoginProvider, token.Name);
+        await actor.RemoveTokenAsync(token.LoginProvider, token.Name).ConfigureAwait(false);
     }
 }

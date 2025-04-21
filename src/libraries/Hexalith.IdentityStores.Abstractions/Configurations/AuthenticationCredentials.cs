@@ -11,6 +11,8 @@ using System.Text.Json.Serialization;
 /// <summary>
 /// Represents the authentication credentials.
 /// </summary>
+/// <param name="id">The identifier.</param>
+/// <param name="secret">The secret.</param>
 public class AuthenticationCredentials(
     string? id,
     string? secret)

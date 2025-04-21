@@ -59,7 +59,7 @@ public partial class DaprActorRoleStore(IRoleCollectionService roleCollection, I
         ThrowIfDisposed();
 
         IRoleActor actor = ActorProxy.DefaultProxyFactory.CreateRoleIdentityActor(role.Id);
-        bool created = await actor.CreateAsync(role);
+        bool created = await actor.CreateAsync(role).ConfigureAwait(false);
         return created
             ? IdentityResult.Success
             : IdentityResult.Failed(ErrorDescriber.DuplicateRoleName(role.Name ?? role.Id));
@@ -73,7 +73,7 @@ public partial class DaprActorRoleStore(IRoleCollectionService roleCollection, I
         ThrowIfDisposed();
 
         IRoleActor actor = ActorProxy.DefaultProxyFactory.CreateRoleIdentityActor(role.Id);
-        await actor.DeleteAsync();
+        await actor.DeleteAsync().ConfigureAwait(false);
         return IdentityResult.Success;
     }
 
@@ -85,7 +85,7 @@ public partial class DaprActorRoleStore(IRoleCollectionService roleCollection, I
         ThrowIfDisposed();
 
         IRoleActor actor = ActorProxy.DefaultProxyFactory.CreateRoleIdentityActor(id);
-        return await actor.FindAsync();
+        return await actor.FindAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -96,8 +96,8 @@ public partial class DaprActorRoleStore(IRoleCollectionService roleCollection, I
         ThrowIfDisposed();
 
         IKeyValueActor actor = ActorProxy.DefaultProxyFactory.CreateRoleNameIndexProxy(normalizedName);
-        string? roleId = await actor.GetAsync();
-        return string.IsNullOrWhiteSpace(roleId) ? null : await FindByIdAsync(roleId, cancellationToken);
+        string? roleId = await actor.GetAsync().ConfigureAwait(false);
+        return string.IsNullOrWhiteSpace(roleId) ? null : await FindByIdAsync(roleId, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -107,7 +107,7 @@ public partial class DaprActorRoleStore(IRoleCollectionService roleCollection, I
         cancellationToken.ThrowIfCancellationRequested();
         ThrowIfDisposed();
 
-        if (await FindByIdAsync(role.Id, cancellationToken) == null)
+        if (await FindByIdAsync(role.Id, cancellationToken).ConfigureAwait(false) == null)
         {
             return IdentityResult.Failed(new IdentityError
             {
@@ -117,7 +117,7 @@ public partial class DaprActorRoleStore(IRoleCollectionService roleCollection, I
         }
 
         IRoleActor actor = ActorProxy.DefaultProxyFactory.CreateRoleIdentityActor(role.Id);
-        await actor.UpdateAsync(role);
+        await actor.UpdateAsync(role).ConfigureAwait(false);
         return IdentityResult.Success;
     }
 
@@ -129,7 +129,7 @@ public partial class DaprActorRoleStore(IRoleCollectionService roleCollection, I
     {
         ThrowIfDisposed();
 
-        IEnumerable<string> roleIds = await _roleCollection.AllAsync();
+        IEnumerable<string> roleIds = await _roleCollection.AllAsync().ConfigureAwait(false);
         List<Task<CustomRole?>> tasks = [];
         foreach (string roleId in roleIds)
         {
@@ -137,7 +137,7 @@ public partial class DaprActorRoleStore(IRoleCollectionService roleCollection, I
             tasks.Add(roleProxy.FindAsync());
         }
 
-        return [.. (await Task.WhenAll(tasks))
+        return [.. (await Task.WhenAll(tasks).ConfigureAwait(false))
             .Where(p => p != null)
             .OfType<CustomRole>()];
     }

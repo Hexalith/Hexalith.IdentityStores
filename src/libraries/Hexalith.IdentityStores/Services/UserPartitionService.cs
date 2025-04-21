@@ -46,14 +46,14 @@ public class UserPartitionService : IUserPartitionService
     /// <inheritdoc/>
     public async Task<string> GetDefaultPartitionAsync(string userName, CancellationToken cancellationToken)
     {
-        CustomUser user = await GetUserAsync(userName, cancellationToken);
+        CustomUser user = await GetUserAsync(userName, cancellationToken).ConfigureAwait(false);
         string? partition = user.DefaultPartition ?? user.Partitions.FirstOrDefault();
         if (string.IsNullOrWhiteSpace(partition))
         {
-            partition = await _partitionService.DefaultAsync(cancellationToken);
+            partition = await _partitionService.DefaultAsync(cancellationToken).ConfigureAwait(false);
             user.DefaultPartition = partition;
             user.Partitions = [partition];
-            _ = await _userStore.UpdateAsync(user, cancellationToken);
+            _ = await _userStore.UpdateAsync(user, cancellationToken).ConfigureAwait(false);
         }
 
         return partition;
@@ -62,16 +62,16 @@ public class UserPartitionService : IUserPartitionService
     /// <inheritdoc/>
     public async Task<IEnumerable<string>> GetPartitionsAsync(string userName, CancellationToken cancellationToken)
     {
-        CustomUser user = await GetUserAsync(userName, cancellationToken);
+        CustomUser user = await GetUserAsync(userName, cancellationToken).ConfigureAwait(false);
         if (user.Partitions.Any())
         {
             return user.Partitions;
         }
 
-        string partition = await _partitionService.DefaultAsync(cancellationToken);
+        string partition = await _partitionService.DefaultAsync(cancellationToken).ConfigureAwait(false);
         user.DefaultPartition = partition;
         user.Partitions = [partition];
-        _ = await _userStore.UpdateAsync(user, cancellationToken);
+        _ = await _userStore.UpdateAsync(user, cancellationToken).ConfigureAwait(false);
 
         return user.Partitions;
     }
@@ -79,7 +79,7 @@ public class UserPartitionService : IUserPartitionService
     /// <inheritdoc/>
     public async Task<bool> InPartitionAsync(string userName, string partitionId, CancellationToken cancellationToken)
     {
-        IEnumerable<string> partitions = await GetPartitionsAsync(userName, cancellationToken);
+        IEnumerable<string> partitions = await GetPartitionsAsync(userName, cancellationToken).ConfigureAwait(false);
         return partitions.Any(p => p == partitionId);
     }
 
@@ -89,6 +89,6 @@ public class UserPartitionService : IUserPartitionService
         string normalized = _userManager.NormalizeName(userName)
             ?? throw new InvalidOperationException($"User with name '{userName}' has an empty normalized name.");
         return await _userStore.FindByNameAsync(normalized, cancellationToken)
-            ?? throw new InvalidOperationException($"User with name '{userName}' (Normalized:{normalized}) not found.");
+.ConfigureAwait(false) ?? throw new InvalidOperationException($"User with name '{userName}' (Normalized:{normalized}) not found.");
     }
 }

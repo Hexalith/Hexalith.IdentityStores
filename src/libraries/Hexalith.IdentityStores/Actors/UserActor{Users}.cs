@@ -44,10 +44,14 @@ public partial class UserActor(
 
     private readonly IUserEmailIndexService _emailCollectionService = emailIndexService;
 
-    // Manages email-based indexing
+    /// <summary>
+    /// Manages email-based indexing.
+    /// </summary>
     private readonly IUserLoginIndexService _loginIndexService = loginIndexService;
 
-    // Manages the main user collection
+    /// <summary>
+    /// Manages the main user collection.
+    /// </summary>
     private readonly IUserNameIndexService _nameCollectionService = nameIndexService;
 
     private readonly IUserTokenIndexService _tokenIndexService = tokenIndexService;
@@ -112,7 +116,7 @@ public partial class UserActor(
             return false;
         }
 
-        _ = await _collectionService.AddAsync(user.Id);
+        _ = await _collectionService.AddAsync(user.Id).ConfigureAwait(false);
 
         _state = new UserActorState
         {
@@ -123,18 +127,18 @@ public partial class UserActor(
         // Create email index if email exists
         if (!string.IsNullOrWhiteSpace(user.NormalizedEmail))
         {
-            await _emailCollectionService.AddAsync(user.NormalizedEmail, user.Id);
+            await _emailCollectionService.AddAsync(user.NormalizedEmail, user.Id).ConfigureAwait(false);
         }
 
         // Create username index if username exists
         if (!string.IsNullOrWhiteSpace(user.NormalizedUserName))
         {
-            await _nameCollectionService.AddAsync(user.NormalizedUserName, user.Id);
+            await _nameCollectionService.AddAsync(user.NormalizedUserName, user.Id).ConfigureAwait(false);
         }
 
         // Save user state
-        await StateManager.AddStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.AddStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
         return true;
     }
 
@@ -146,36 +150,36 @@ public partial class UserActor(
     public async Task DeleteAsync()
     {
         string id = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is not null)
         {
             // Remove email index
             if (!string.IsNullOrWhiteSpace(_state.User.NormalizedEmail))
             {
-                await _emailCollectionService.RemoveAsync(_state.User.NormalizedEmail);
+                await _emailCollectionService.RemoveAsync(_state.User.NormalizedEmail).ConfigureAwait(false);
             }
 
             // Remove username index
             if (!string.IsNullOrWhiteSpace(_state.User.NormalizedUserName))
             {
-                await _nameCollectionService.RemoveAsync(_state.User.NormalizedUserName);
+                await _nameCollectionService.RemoveAsync(_state.User.NormalizedUserName).ConfigureAwait(false);
             }
 
             // Clear state
             _state = null;
-            await StateManager.RemoveStateAsync(IdentityStoresConstants.UserStateName, CancellationToken.None);
-            await StateManager.SaveStateAsync(CancellationToken.None);
+            await StateManager.RemoveStateAsync(IdentityStoresConstants.UserStateName, CancellationToken.None).ConfigureAwait(false);
+            await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         // Remove from indexes
-        await _collectionService.RemoveAsync(id);
+        await _collectionService.RemoveAsync(id).ConfigureAwait(false);
     }
 
     /// <summary>
     /// Checks if the user exists in the state store.
     /// </summary>
     /// <returns>True if user exists, false otherwise.</returns>
-    public async Task<bool> ExistsAsync() => await GetStateAsync(CancellationToken.None) != null;
+    public async Task<bool> ExistsAsync() => await GetStateAsync(CancellationToken.None).ConfigureAwait(false) != null;
 
     /// <summary>
     /// Retrieves a user's identity information.
@@ -183,7 +187,7 @@ public partial class UserActor(
     /// <returns>The user identity if found, null otherwise.</returns>
     public async Task<CustomUser?> FindAsync()
     {
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         return _state?.User;
     }
 
@@ -197,7 +201,7 @@ public partial class UserActor(
     public async Task UpdateAsync(CustomUser user)
     {
         ArgumentNullException.ThrowIfNull(user);
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Update Failed : User '{user.Id}' not found.");
@@ -206,20 +210,20 @@ public partial class UserActor(
         // Update user state
         CustomUser oldUser = _state.User;
         _state.User = user;
-        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
 
         // Update email index
         if (oldUser.NormalizedEmail != user.NormalizedEmail)
         {
             if (!string.IsNullOrWhiteSpace(oldUser.NormalizedEmail))
             {
-                await _emailCollectionService.RemoveAsync(oldUser.NormalizedEmail);
+                await _emailCollectionService.RemoveAsync(oldUser.NormalizedEmail).ConfigureAwait(false);
             }
 
             if (!string.IsNullOrWhiteSpace(user.NormalizedEmail))
             {
-                await _emailCollectionService.AddAsync(user.NormalizedEmail, user.Id);
+                await _emailCollectionService.AddAsync(user.NormalizedEmail, user.Id).ConfigureAwait(false);
             }
         }
 
@@ -228,12 +232,12 @@ public partial class UserActor(
         {
             if (!string.IsNullOrWhiteSpace(oldUser.NormalizedUserName))
             {
-                await _nameCollectionService.RemoveAsync(oldUser.NormalizedUserName);
+                await _nameCollectionService.RemoveAsync(oldUser.NormalizedUserName).ConfigureAwait(false);
             }
 
             if (!string.IsNullOrWhiteSpace(user.NormalizedUserName))
             {
-                await _nameCollectionService.AddAsync(user.NormalizedUserName, user.Id);
+                await _nameCollectionService.AddAsync(user.NormalizedUserName, user.Id).ConfigureAwait(false);
             }
         }
     }
@@ -248,7 +252,7 @@ public partial class UserActor(
     {
         if (_state is null)
         {
-            ConditionalValue<UserActorState> result = await StateManager.TryGetStateAsync<UserActorState>(IdentityStoresConstants.UserStateName, cancellationToken);
+            ConditionalValue<UserActorState> result = await StateManager.TryGetStateAsync<UserActorState>(IdentityStoresConstants.UserStateName, cancellationToken).ConfigureAwait(false);
             if (result.HasValue)
             {
                 _state = result.Value;

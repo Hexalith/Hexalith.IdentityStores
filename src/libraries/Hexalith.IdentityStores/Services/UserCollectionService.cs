@@ -26,11 +26,11 @@ public class UserCollectionService(IActorProxyFactory actorHost) : IUserCollecti
     private readonly IKeyHashActor _keyHashActor = actorHost.CreateAllUsersProxy();
 
     /// <inheritdoc/>
-    public async Task<int> AddAsync(string id) => await _keyHashActor.AddAsync(id);
+    public async Task<int> AddAsync(string id) => await _keyHashActor.AddAsync(id).ConfigureAwait(false);
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<string>> AllAsync() => await _keyHashActor.AllAsync(0, 0);
+    public async Task<IEnumerable<string>> AllAsync() => await _keyHashActor.AllAsync(0, 0).ConfigureAwait(false);
 
     /// <inheritdoc/>
-    public async Task RemoveAsync(string id) => await _keyHashActor.RemoveAsync(id);
+    public async Task RemoveAsync(string id) => await _keyHashActor.RemoveAsync(id).ConfigureAwait(false);
 }

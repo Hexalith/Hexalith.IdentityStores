@@ -10,6 +10,11 @@ using Hexalith.Commons.Configurations;
 /// <summary>
 /// Security settings.
 /// </summary>
+/// <param name="microsoft">The Microsoft authentication credentials.</param>
+/// <param name="github">The GitHub authentication credentials.</param>
+/// <param name="google">The Google authentication credentials.</param>
+/// <param name="facebook">The Facebook authentication credentials.</param>
+/// <param name="x">The X authentication credentials.</param>
 public class IdentityStoresSettings(
     AuthenticationCredentials? microsoft,
     AuthenticationCredentials? github,

@@ -20,10 +20,11 @@ public partial class UserActor
     /// </summary>
     /// <param name="token">Token information to store.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <exception cref="InvalidOperationException">When user not found.</exception>
     public async Task AddTokenAsync(CustomUserToken token)
     {
         string userId = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Add token failed : User '{userId}' not found.");
@@ -33,10 +34,10 @@ public partial class UserActor
             .Tokens
             .Where(p => p.Name != token.Name || p.LoginProvider != token.LoginProvider)
             .Union([token]);
-        await _tokenIndexService.AddAsync(token.LoginProvider, token.Name, userId);
+        await _tokenIndexService.AddAsync(token.LoginProvider, token.Name, userId).ConfigureAwait(false);
 
-        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -45,9 +46,10 @@ public partial class UserActor
     /// <param name="loginProvider">Name of the login provider.</param>
     /// <param name="name">Name of the token.</param>
     /// <returns>Token information if found, null otherwise.</returns>
+    /// <exception cref="InvalidOperationException">When user not found.</exception>
     public async Task<CustomUserToken?> GetTokenAsync(string loginProvider, string name)
     {
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         return _state is null
             ? throw new InvalidOperationException($"Get token failed : User '{Id.ToUnescapeString()}' not found.")
             : _state.Tokens.FirstOrDefault(p => p.Name == name && p.LoginProvider == loginProvider);
@@ -63,7 +65,7 @@ public partial class UserActor
     public async Task RemoveTokenAsync(string loginProvider, string name)
     {
         string userId = Id.ToUnescapeString();
-        _state = await GetStateAsync(CancellationToken.None);
+        _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
         {
             throw new InvalidOperationException($"Remove token failed : User '{userId}' not found.");
@@ -71,9 +73,9 @@ public partial class UserActor
 
         _state.Tokens = _state.Tokens.Where(p => p.Name != name || p.LoginProvider != loginProvider);
 
-        await _tokenIndexService.RemoveAsync(loginProvider, name);
+        await _tokenIndexService.RemoveAsync(loginProvider, name).ConfigureAwait(false);
 
-        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None);
-        await StateManager.SaveStateAsync(CancellationToken.None);
+        await StateManager.SetStateAsync(IdentityStoresConstants.UserStateName, _state, CancellationToken.None).ConfigureAwait(false);
+        await StateManager.SaveStateAsync(CancellationToken.None).ConfigureAwait(false);
     }
 }

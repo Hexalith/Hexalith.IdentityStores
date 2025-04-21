@@ -32,7 +32,7 @@ public sealed class IdentityUserAccessor(UserManager<CustomUser> userManager, Id
     public async Task<CustomUser> GetRequiredUserAsync(HttpContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
-        CustomUser? user = await _userManager.GetUserAsync(context.User);
+        CustomUser? user = await _userManager.GetUserAsync(context.User).ConfigureAwait(false);
 
         if (user is null)
         {

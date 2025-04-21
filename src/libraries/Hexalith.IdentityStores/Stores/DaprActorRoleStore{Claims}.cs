@@ -33,7 +33,7 @@ public partial class DaprActorRoleStore : RoleStoreBase<CustomRole, string, Cust
         ThrowIfDisposed();
 
         IRoleActor actor = ActorProxy.DefaultProxyFactory.CreateRoleIdentityActor(role.Id);
-        await actor.AddClaimsAsync([claim]);
+        await actor.AddClaimsAsync([claim]).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -44,7 +44,7 @@ public partial class DaprActorRoleStore : RoleStoreBase<CustomRole, string, Cust
         ThrowIfDisposed();
 
         IRoleActor actor = ActorProxy.DefaultProxyFactory.CreateRoleIdentityActor(role.Id);
-        return [.. await actor.GetClaimsAsync()];
+        return [.. await actor.GetClaimsAsync().ConfigureAwait(false)];
     }
 
     /// <inheritdoc/>
@@ -56,6 +56,6 @@ public partial class DaprActorRoleStore : RoleStoreBase<CustomRole, string, Cust
         ThrowIfDisposed();
 
         IRoleActor actor = ActorProxy.DefaultProxyFactory.CreateRoleIdentityActor(role.Id);
-        await actor.RemoveClaimsAsync([claim]);
+        await actor.RemoveClaimsAsync([claim]).ConfigureAwait(false);
     }
 }

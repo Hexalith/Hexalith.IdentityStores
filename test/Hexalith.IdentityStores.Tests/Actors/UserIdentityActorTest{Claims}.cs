@@ -117,7 +117,9 @@ public partial class UserIdentityActorTest
             stateManagerMoq.Object);
 
         // Act
-        await actor.AddClaimsAsync(newClaims.Select(p => new CustomUserClaim { ClaimType = p.Type, ClaimValue = p.Value }));
+        await actor.AddClaimsAsync(newClaims
+            .Select(p => new CustomUserClaim { ClaimType = p.Type, ClaimValue = p.Value }))
+            .ConfigureAwait(true);
 
         // Assert
         stateManagerMoq.Verify();
@@ -180,7 +182,7 @@ public partial class UserIdentityActorTest
             stateManagerMoq.Object);
 
         // Act
-        IEnumerable<CustomUserClaim> claims = await actor.GetClaimsAsync();
+        IEnumerable<CustomUserClaim> claims = await actor.GetClaimsAsync().ConfigureAwait(true);
 
         // Assert
         stateManagerMoq.Verify();

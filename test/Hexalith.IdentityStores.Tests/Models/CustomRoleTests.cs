@@ -20,7 +20,7 @@ public class CustomRoleTests
     /// Verifies that the properties of the <see cref="CustomRole"/> class are set correctly.
     /// </summary>
     [Fact]
-    public void CustomRole_Properties_ShouldBeSetCorrectly()
+    public void CustomRolePropertiesShouldBeSetCorrectly()
     {
         // Arrange: Create a new CustomRole object with predefined properties
         CustomRole role = new()
@@ -29,7 +29,7 @@ public class CustomRoleTests
             Name = "Admin",
             NormalizedName = "ADMIN",
             ConcurrencyStamp = "stamp123",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 
@@ -38,7 +38,7 @@ public class CustomRoleTests
         role.Name.ShouldBe("Admin"); // Check if Name is set correctly
         role.NormalizedName.ShouldBe("ADMIN"); // Check if NormalizedName is set correctly
         role.ConcurrencyStamp.ShouldBe("stamp123"); // Check if ConcurrencyStamp is set correctly
-        role.ExternalData.ShouldBe("{\"key\":\"value\"}"); // Check if ExternalData is set correctly
+        role.ExternalData.ShouldBe(/*lang=json,strict*/ "{\"key\":\"value\"}"); // Check if ExternalData is set correctly
         role.ExternalId.ShouldBe("ext123"); // Check if ExternalId is set correctly
     }
 
@@ -46,7 +46,7 @@ public class CustomRoleTests
     /// Verifies that the <see cref="CustomRole"/> class can be serialized and deserialized while maintaining its properties.
     /// </summary>
     [Fact]
-    public void CustomRole_SerializeDeserialize_ShouldMaintainProperties()
+    public void CustomRoleSerializeDeserializeShouldMaintainProperties()
     {
         // Arrange: Create a new CustomRole object with predefined properties
         CustomRole originalRole = new()
@@ -55,7 +55,7 @@ public class CustomRoleTests
             Name = "Admin",
             NormalizedName = "ADMIN",
             ConcurrencyStamp = "stamp123",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 

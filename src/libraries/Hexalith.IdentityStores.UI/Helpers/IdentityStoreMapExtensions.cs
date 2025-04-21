@@ -29,7 +29,7 @@ using Microsoft.Extensions.Primitives;
 /// <summary>
 /// Provides extension methods for mapping additional identity endpoints required by the Identity Razor components.
 /// </summary>
-public static class IdentityStoreMapExtensions
+public static partial class IdentityStoreMapExtensions
 {
     /// <summary>
     /// Maps additional identity endpoints required by the Identity Razor components.
@@ -117,7 +117,7 @@ public static class IdentityStoreMapExtensions
             }
 
             string userId = await userManager.GetUserIdAsync(user).ConfigureAwait(false);
-            downloadLogger.LogInformation("User with ID '{UserId}' asked for their personal data.", userId);
+            LogPersonalDataRequested(downloadLogger, userId);
 
             // Only include personal data for download
             Dictionary<string, string> personalData = [];
@@ -144,6 +144,17 @@ public static class IdentityStoreMapExtensions
 
         return accountGroup;
     }
+
+    /// <summary>
+    /// Logs when a user requests their personal data.
+    /// </summary>
+    /// <param name="logger">The logger to use.</param>
+    /// <param name="userId">The user ID.</param>
+    [LoggerMessage(
+        EventId = 1,
+        Level = LogLevel.Information,
+        Message = "User with ID '{UserId}' asked for their personal data.")]
+    private static partial void LogPersonalDataRequested(ILogger logger, string userId);
 
     private static string TemporaryFluentButtonFix(string provider)
     {

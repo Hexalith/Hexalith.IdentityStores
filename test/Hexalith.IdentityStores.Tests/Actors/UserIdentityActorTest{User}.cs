@@ -52,7 +52,7 @@ public partial class UserIdentityActorTest
 
         // Setup the mock to verify that AddStateAsync is called exactly once
         // with the correct state name and user data
-        stateManagerMoq.Setup(p => p.AddStateAsync<UserActorState>(
+        stateManagerMoq.Setup(p => p.AddStateAsync(
             IdentityStoresConstants.UserStateName,
             It.Is<UserActorState>(p => p.User.Id == user.Id),
             It.IsAny<CancellationToken>()))
@@ -99,7 +99,7 @@ public partial class UserIdentityActorTest
 
         // Act
         // Attempt to create the user using the actor
-        bool created = await actor.CreateAsync(user);
+        bool created = await actor.CreateAsync(user).ConfigureAwait(true);
 
         // Assert
         // Verify that the state manager was called as expected
@@ -186,7 +186,7 @@ public partial class UserIdentityActorTest
             stateManagerMoq.Object);
 
         // Act
-        await actor.DeleteAsync();
+        await actor.DeleteAsync().ConfigureAwait(true);
 
         // Assert
         stateManagerMoq.Verify();

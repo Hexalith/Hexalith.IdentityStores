@@ -21,7 +21,7 @@ public class CustomUserTests
     /// Tests that the properties of <see cref="CustomUser"/> are set correctly.
     /// </summary>
     [Fact]
-    public void CustomUser_Properties_ShouldBeSetCorrectly()
+    public void CustomUserPropertiesShouldBeSetCorrectly()
     {
         // Arrange
         CustomUser user = new()
@@ -31,7 +31,7 @@ public class CustomUserTests
             Email = "test@example.com",
             DefaultPartition = "partition1",
             Disabled = false,
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
             Partitions = ["partition1", "partition2"],
         };
@@ -42,7 +42,7 @@ public class CustomUserTests
         user.Email.ShouldBe("test@example.com");
         user.DefaultPartition.ShouldBe("partition1");
         user.Disabled.ShouldBeFalse();
-        user.ExternalData.ShouldBe("{\"key\":\"value\"}");
+        user.ExternalData.ShouldBe(/*lang=json,strict*/ "{\"key\":\"value\"}");
         user.ExternalId.ShouldBe("ext123");
         user.Partitions.Count().ShouldBe(2);
         user.Partitions.ShouldContain("partition1");
@@ -53,7 +53,7 @@ public class CustomUserTests
     /// Tests that serialization and deserialization of <see cref="CustomUser"/> maintains property values.
     /// </summary>
     [Fact]
-    public void CustomUser_SerializeDeserialize_ShouldMaintainProperties()
+    public void CustomUserSerializeDeserializeShouldMaintainProperties()
     {
         // Arrange
         CustomUser originalUser = new()
@@ -63,7 +63,7 @@ public class CustomUserTests
             Email = "test@example.com",
             DefaultPartition = "partition1",
             Disabled = false,
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
             Partitions = ["partition1", "partition2"],
         };

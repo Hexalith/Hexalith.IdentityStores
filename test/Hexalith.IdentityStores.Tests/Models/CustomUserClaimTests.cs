@@ -21,7 +21,7 @@ public class CustomUserClaimTests
     /// Tests that the initialize from claim method sets properties correctly.
     /// </summary>
     [Fact]
-    public void CustomUserClaim_InitializeFromClaim_ShouldSetProperties()
+    public void CustomUserClaimInitializeFromClaimShouldSetProperties()
     {
         // Arrange: Create a Claim and an empty CustomUserClaim.
         Claim claim = new(ClaimTypes.Name, "Test User");
@@ -39,7 +39,7 @@ public class CustomUserClaimTests
     /// Tests that the properties of <see cref="CustomUserClaim"/> are set correctly.
     /// </summary>
     [Fact]
-    public void CustomUserClaim_Properties_ShouldBeSetCorrectly()
+    public void CustomUserClaimPropertiesShouldBeSetCorrectly()
     {
         // Arrange: Create a new instance of CustomUserClaim with test data.
         CustomUserClaim userClaim = new()
@@ -48,7 +48,7 @@ public class CustomUserClaimTests
             UserId = "user123",
             ClaimType = ClaimTypes.Name,
             ClaimValue = "Test User",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 
@@ -57,7 +57,7 @@ public class CustomUserClaimTests
         userClaim.UserId.ShouldBe("user123");
         userClaim.ClaimType.ShouldBe(ClaimTypes.Name);
         userClaim.ClaimValue.ShouldBe("Test User");
-        userClaim.ExternalData.ShouldBe("{\"key\":\"value\"}");
+        userClaim.ExternalData.ShouldBe(/*lang=json,strict*/ "{\"key\":\"value\"}");
         userClaim.ExternalId.ShouldBe("ext123");
     }
 
@@ -65,7 +65,7 @@ public class CustomUserClaimTests
     /// Tests that serializing and deserializing a <see cref="CustomUserClaim"/> maintains its properties.
     /// </summary>
     [Fact]
-    public void CustomUserClaim_SerializeDeserialize_ShouldMaintainProperties()
+    public void CustomUserClaimSerializeDeserializeShouldMaintainProperties()
     {
         // Arrange: Create a new instance of CustomUserClaim with test data.
         CustomUserClaim originalUserClaim = new()
@@ -74,7 +74,7 @@ public class CustomUserClaimTests
             UserId = "user123",
             ClaimType = ClaimTypes.Name,
             ClaimValue = "Test User",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 
@@ -96,7 +96,7 @@ public class CustomUserClaimTests
     /// Tests that the to claim method returns the correct <see cref="Claim"/>.
     /// </summary>
     [Fact]
-    public void CustomUserClaim_ToClaim_ShouldReturnCorrectClaim()
+    public void CustomUserClaimToClaimShouldReturnCorrectClaim()
     {
         // Arrange: Create a new instance of CustomUserClaim with test data.
         CustomUserClaim userClaim = new()

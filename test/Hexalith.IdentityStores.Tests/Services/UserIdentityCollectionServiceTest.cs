@@ -60,7 +60,7 @@ public class UserIdentityCollectionServiceTest
         string id = Guid.NewGuid().ToString();
 
         // Act
-        _ = await service.AddAsync(id);
+        _ = await service.AddAsync(id).ConfigureAwait(true);
 
         // Verify the actor methods were called
         actorMock.Verify();

@@ -21,7 +21,7 @@ public class CustomUserTokenTests
     /// Tests that the properties of <see cref="CustomUserToken"/> are set correctly.
     /// </summary>
     [Fact]
-    public void CustomUserToken_Properties_ShouldBeSetCorrectly()
+    public void CustomUserTokenPropertiesShouldBeSetCorrectly()
     {
         // Arrange
         CustomUserToken userToken = new()
@@ -30,7 +30,7 @@ public class CustomUserTokenTests
             LoginProvider = "TestProvider",
             Name = "TokenName",
             Value = "TokenValue",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 
@@ -39,7 +39,7 @@ public class CustomUserTokenTests
         userToken.LoginProvider.ShouldBe("TestProvider");
         userToken.Name.ShouldBe("TokenName");
         userToken.Value.ShouldBe("TokenValue");
-        userToken.ExternalData.ShouldBe("{\"key\":\"value\"}");
+        userToken.ExternalData.ShouldBe(/*lang=json,strict*/ "{\"key\":\"value\"}");
         userToken.ExternalId.ShouldBe("ext123");
     }
 
@@ -47,7 +47,7 @@ public class CustomUserTokenTests
     /// Tests that serialization and deserialization of <see cref="CustomUserToken"/> maintain the property values.
     /// </summary>
     [Fact]
-    public void CustomUserToken_SerializeDeserialize_ShouldMaintainProperties()
+    public void CustomUserTokenSerializeDeserializeShouldMaintainProperties()
     {
         // Arrange
         CustomUserToken originalUserToken = new()
@@ -56,7 +56,7 @@ public class CustomUserTokenTests
             LoginProvider = "TestProvider",
             Name = "TokenName",
             Value = "TokenValue",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 

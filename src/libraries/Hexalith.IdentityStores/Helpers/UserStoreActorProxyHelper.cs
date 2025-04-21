@@ -81,7 +81,7 @@ public static class UserStoreActorProxyHelper
     {
         ArgumentNullException.ThrowIfNull(actorProxyFactory);
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
-        Dapr.Actors.ActorId aid = id.ToActorId();
+        var aid = id.ToActorId();
         return actorProxyFactory.CreateActorProxy<IKeyHashActor>(aid, IdentityStoresConstants.UserClaimIndexActorTypeName);
     }
 

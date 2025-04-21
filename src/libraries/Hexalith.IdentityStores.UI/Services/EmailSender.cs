@@ -17,6 +17,8 @@ using Microsoft.Extensions.Logging;
 /// Service for sending emails related to user identity actions such as confirmation links and password resets.
 /// Implements the <see cref="IEmailSender{CustomUser}"/> interface.
 /// </summary>
+/// <param name="emailService">The email service used to send emails.</param>
+/// <param name="logger">The logger used for logging email sending events.</param>
 public partial class EmailSender(IEmailService emailService, ILogger<EmailSender> logger) : IEmailSender<CustomUser>
 {
     private readonly IEmailService _emailService = emailService;

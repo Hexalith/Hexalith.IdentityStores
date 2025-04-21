@@ -21,21 +21,21 @@ public class CustomUserRoleTests
     /// Tests that the properties of <see cref="CustomUserRole"/> are set correctly.
     /// </summary>
     [Fact]
-    public void CustomUserRole_Properties_ShouldBeSetCorrectly()
+    public void CustomUserRolePropertiesShouldBeSetCorrectly()
     {
         // Arrange
         CustomUserRole userRole = new()
         {
             UserId = "user123",
             RoleId = "role456",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 
         // Assert
         userRole.UserId.ShouldBe("user123");
         userRole.RoleId.ShouldBe("role456");
-        userRole.ExternalData.ShouldBe("{\"key\":\"value\"}");
+        userRole.ExternalData.ShouldBe(/*lang=json,strict*/ "{\"key\":\"value\"}");
         userRole.ExternalId.ShouldBe("ext123");
     }
 
@@ -43,14 +43,14 @@ public class CustomUserRoleTests
     /// Tests that serialization and deserialization of <see cref="CustomUserRole"/> maintain the integrity of the properties.
     /// </summary>
     [Fact]
-    public void CustomUserRole_SerializeDeserialize_ShouldMaintainProperties()
+    public void CustomUserRoleSerializeDeserializeShouldMaintainProperties()
     {
         // Arrange
         CustomUserRole originalUserRole = new()
         {
             UserId = "user123",
             RoleId = "role456",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 

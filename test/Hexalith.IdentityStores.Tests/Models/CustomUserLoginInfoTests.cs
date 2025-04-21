@@ -27,7 +27,7 @@ public class CustomUserLoginInfoTests
     /// with the correct properties based on the provided <see cref="UserLoginInfo"/>.
     /// </summary>
     [Fact]
-    public void CustomUserLoginInfo_Create_ShouldReturnCorrectInstance()
+    public void CustomUserLoginInfoCreateShouldReturnCorrectInstance()
     {
         // Arrange: Create a UserLoginInfo instance with test data.
         UserLoginInfo userLoginInfo = new("TestProvider", "ProviderKey123", "DisplayName");
@@ -46,7 +46,7 @@ public class CustomUserLoginInfoTests
     /// <see cref="ArgumentNullException"/> when the input is null.
     /// </summary>
     [Fact]
-    public void CustomUserLoginInfo_Create_ShouldThrowExceptionForNullInput() =>
+    public void CustomUserLoginInfoCreateShouldThrowExceptionForNullInput() =>
 
         // Act & Assert: Ensure an exception is thrown when null is passed.
         Should.Throw<ArgumentNullException>(() => CustomUserLoginInfo.Create(null!));
@@ -56,7 +56,7 @@ public class CustomUserLoginInfoTests
     /// maintains the properties of the <see cref="CustomUserLoginInfo"/> instance.
     /// </summary>
     [Fact]
-    public void CustomUserLoginInfo_JsonNet_SerializeDeserialize_ShouldMaintainProperties()
+    public void CustomUserLoginInfoJsonNetSerializeDeserializeShouldMaintainProperties()
     {
         // Arrange: Create an instance of CustomUserLoginInfo with test data.
         CustomUserLoginInfo originalLoginInfo = new("TestProvider", "ProviderKey123", "DisplayName");
@@ -77,7 +77,7 @@ public class CustomUserLoginInfoTests
     /// are correctly set during initialization.
     /// </summary>
     [Fact]
-    public void CustomUserLoginInfo_Properties_ShouldBeSetCorrectly()
+    public void CustomUserLoginInfoPropertiesShouldBeSetCorrectly()
     {
         // Arrange & Act: Create an instance of CustomUserLoginInfo with test data.
         CustomUserLoginInfo loginInfo = new("TestProvider", "ProviderKey123", "DisplayName");
@@ -93,7 +93,7 @@ public class CustomUserLoginInfoTests
     /// maintains the properties of the <see cref="CustomUserLoginInfo"/> instance.
     /// </summary>
     [Fact]
-    public void CustomUserLoginInfo_SystemTextJson_SerializeDeserialize_ShouldMaintainProperties()
+    public void CustomUserLoginInfoSystemTextJsonSerializeDeserializeShouldMaintainProperties()
     {
         // Arrange: Create an instance of CustomUserLoginInfo with test data.
         CustomUserLoginInfo originalLoginInfo = new("TestProvider", "ProviderKey123", "DisplayName");
@@ -114,7 +114,7 @@ public class CustomUserLoginInfoTests
     /// returns a <see cref="UserLoginInfo"/> instance with the correct properties.
     /// </summary>
     [Fact]
-    public void CustomUserLoginInfo_UserLoginInfo_ShouldReturnCorrectInstance()
+    public void CustomUserLoginInfoUserLoginInfoShouldReturnCorrectInstance()
     {
         // Arrange: Create an instance of CustomUserLoginInfo with test data.
         CustomUserLoginInfo loginInfo = new("TestProvider", "ProviderKey123", "DisplayName");
@@ -133,7 +133,7 @@ public class CustomUserLoginInfoTests
     /// is ignored during serialization.
     /// </summary>
     [Fact]
-    public void CustomUserLoginInfo_UserLoginInfoProperty_IsIgnoredInSerialization()
+    public void CustomUserLoginInfoUserLoginInfoPropertyIsIgnoredInSerialization()
     {
         // Arrange: Create an instance of CustomUserLoginInfo with test data.
         CustomUserLoginInfo originalLoginInfo = new("TestProvider", "ProviderKey123", "DisplayName");

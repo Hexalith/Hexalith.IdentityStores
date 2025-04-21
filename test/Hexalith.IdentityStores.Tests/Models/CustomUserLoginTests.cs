@@ -20,7 +20,7 @@ public class CustomUserLoginTests
     /// Tests that the default constructor of <see cref="CustomUserLogin"/> creates a valid instance.
     /// </summary>
     [Fact]
-    public void CustomUserLogin_DefaultConstructor_ShouldCreateInstance()
+    public void CustomUserLoginDefaultConstructorShouldCreateInstance()
     {
         // Arrange & Act: Create an instance of CustomUserLogin using the default constructor.
         CustomUserLogin userLogin = new();
@@ -33,7 +33,7 @@ public class CustomUserLoginTests
     /// Tests that the parameterized constructor of <see cref="CustomUserLogin"/> correctly sets properties.
     /// </summary>
     [Fact]
-    public void CustomUserLogin_ParameterizedConstructor_ShouldSetProperties()
+    public void CustomUserLoginParameterizedConstructorShouldSetProperties()
     {
         // Arrange: Prepare the input data for the parameterized constructor.
         CustomUserLoginInfo loginInfo = new("TestProvider", "ProviderKey123", "DisplayName");
@@ -53,7 +53,7 @@ public class CustomUserLoginTests
     /// Tests that the properties of <see cref="CustomUserLogin"/> can be set and retrieved correctly.
     /// </summary>
     [Fact]
-    public void CustomUserLogin_Properties_ShouldBeSetCorrectly()
+    public void CustomUserLoginPropertiesShouldBeSetCorrectly()
     {
         // Arrange: Create an instance of CustomUserLogin and set its properties.
         CustomUserLogin userLogin = new()
@@ -62,7 +62,7 @@ public class CustomUserLoginTests
             ProviderKey = "ProviderKey123",
             ProviderDisplayName = "DisplayName",
             UserId = "User123",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 
@@ -71,7 +71,7 @@ public class CustomUserLoginTests
         userLogin.ProviderKey.ShouldBe("ProviderKey123");
         userLogin.ProviderDisplayName.ShouldBe("DisplayName");
         userLogin.UserId.ShouldBe("User123");
-        userLogin.ExternalData.ShouldBe("{\"key\":\"value\"}");
+        userLogin.ExternalData.ShouldBe(/*lang=json,strict*/ "{\"key\":\"value\"}");
         userLogin.ExternalId.ShouldBe("ext123");
     }
 
@@ -80,7 +80,7 @@ public class CustomUserLoginTests
     /// while maintaining all property values.
     /// </summary>
     [Fact]
-    public void CustomUserLogin_SerializeDeserialize_ShouldMaintainProperties()
+    public void CustomUserLoginSerializeDeserializeShouldMaintainProperties()
     {
         // Arrange: Create an instance of CustomUserLogin with specific properties.
         CustomUserLogin originalUserLogin = new()
@@ -89,7 +89,7 @@ public class CustomUserLoginTests
             ProviderKey = "ProviderKey123",
             ProviderDisplayName = "DisplayName",
             UserId = "User123",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 

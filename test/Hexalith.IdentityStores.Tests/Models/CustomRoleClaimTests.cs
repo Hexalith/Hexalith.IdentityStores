@@ -23,7 +23,7 @@ public class CustomRoleClaimTests
     /// based on the provided <see cref="Claim"/>.
     /// </summary>
     [Fact]
-    public void CustomRoleClaim_InitializeFromClaim_ShouldSetProperties()
+    public void CustomRoleClaimInitializeFromClaimShouldSetProperties()
     {
         // Arrange: Create a Claim instance with test data.
         Claim claim = new(ClaimTypes.Role, "Admin");
@@ -42,7 +42,7 @@ public class CustomRoleClaimTests
     /// are correctly set during initialization.
     /// </summary>
     [Fact]
-    public void CustomRoleClaim_Properties_ShouldBeSetCorrectly()
+    public void CustomRoleClaimPropertiesShouldBeSetCorrectly()
     {
         // Arrange: Create an instance of CustomRoleClaim with test data.
         CustomRoleClaim roleClaim = new()
@@ -51,7 +51,7 @@ public class CustomRoleClaimTests
             RoleId = "role123",
             ClaimType = ClaimTypes.Role,
             ClaimValue = "Admin",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 
@@ -60,7 +60,7 @@ public class CustomRoleClaimTests
         roleClaim.RoleId.ShouldBe("role123");
         roleClaim.ClaimType.ShouldBe(ClaimTypes.Role);
         roleClaim.ClaimValue.ShouldBe("Admin");
-        roleClaim.ExternalData.ShouldBe("{\"key\":\"value\"}");
+        roleClaim.ExternalData.ShouldBe(/*lang=json,strict*/ "{\"key\":\"value\"}");
         roleClaim.ExternalId.ShouldBe("ext123");
     }
 
@@ -69,7 +69,7 @@ public class CustomRoleClaimTests
     /// maintains the properties of the <see cref="CustomRoleClaim"/> instance.
     /// </summary>
     [Fact]
-    public void CustomRoleClaim_SerializeDeserialize_ShouldMaintainProperties()
+    public void CustomRoleClaimSerializeDeserializeShouldMaintainProperties()
     {
         // Arrange: Create an instance of CustomRoleClaim with test data.
         CustomRoleClaim originalRoleClaim = new()
@@ -78,7 +78,7 @@ public class CustomRoleClaimTests
             RoleId = "role123",
             ClaimType = ClaimTypes.Role,
             ClaimValue = "Admin",
-            ExternalData = "{\"key\":\"value\"}",
+            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 
@@ -101,7 +101,7 @@ public class CustomRoleClaimTests
     /// returns a <see cref="Claim"/> instance with the correct properties.
     /// </summary>
     [Fact]
-    public void CustomRoleClaim_ToClaim_ShouldReturnCorrectClaim()
+    public void CustomRoleClaimToClaimShouldReturnCorrectClaim()
     {
         // Arrange: Create an instance of CustomRoleClaim with test data.
         CustomRoleClaim roleClaim = new()

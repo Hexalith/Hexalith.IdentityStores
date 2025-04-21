@@ -9,6 +9,10 @@ on:
       - beta
       - '[0-9]+.[0-9]+.x'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   packages: write
   contents: write

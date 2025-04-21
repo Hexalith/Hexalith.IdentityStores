@@ -5,11 +5,11 @@
 
 namespace Hexalith.IdentityStores.UI.Helpers;
 
-using Hexalith.IdentityStore.UI.Services;
 using Hexalith.IdentityStores.Helpers;
 using Hexalith.IdentityStores.Models;
 using Hexalith.IdentityStores.Stores;
 using Hexalith.IdentityStores.UI.Account;
+using Hexalith.IdentityStores.UI.Services;
 
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;

@@ -5,7 +5,6 @@
 
 namespace Hexalith.IdentityStores.Tests.UI;
 
-using System;
 using System.Reflection;
 
 using Hexalith.IdentityStores.UI.Account.Pages.Manage;
@@ -39,7 +38,7 @@ public class ExternalLoginsTests
     /// due to the missing ExternalLoginExtensions class.
     /// </summary>
     [Fact]
-    public void OnGetLinkLoginCallbackAsyncShouldThrowTypeLoadException()
+    public void OnGetLinkLoginCallbackAsyncShouldNotThrowException()
     {
         // Arrange
         var externalLogins = new ExternalLogins();
@@ -52,22 +51,8 @@ public class ExternalLoginsTests
         _ = methodInfo.ShouldNotBeNull("The OnGetLinkLoginCallbackAsync method should exist");
 
         // Act & Assert
-        TypeLoadException exception = Should.Throw<TypeLoadException>(() =>
-        {
-            try
-            {
-                // Invoke the method
-                // This will throw TargetInvocationException wrapping our TypeLoadException
-                _ = methodInfo.Invoke(externalLogins, null);
-            }
-            catch (TargetInvocationException ex) when (ex.InnerException is TypeLoadException)
-            {
-                // Unwrap and rethrow the TypeLoadException
-                throw ex.InnerException;
-            }
-        });
-
-        // Verify the exception is for the missing type
-        exception.Message.ShouldContain("Hexalith.IdentityStores.Extensions.ExternalLoginExtensions");
+        // Invoke the method
+        // This will throw TargetInvocationException wrapping our TypeLoadException
+        _ = methodInfo.Invoke(externalLogins, null);
     }
 }

@@ -13,17 +13,17 @@ using System.Text.Json.Serialization;
 /// </summary>
 /// <param name="id">The identifier.</param>
 /// <param name="secret">The secret.</param>
-/// <param name="tenantId">The Azure AD tenant ID for single-tenant applications.</param>
+/// <param name="tenant">The Azure AD tenant ID for single-tenant applications.</param>
 public class AuthenticationCredentials(
     string? id,
     string? secret,
-    string? tenantId = null)
+    string? tenant)
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AuthenticationCredentials"/> class.
     /// </summary>
     public AuthenticationCredentials()
-        : this(null, null)
+        : this(null, null, null)
     {
     }
 
@@ -43,9 +43,9 @@ public class AuthenticationCredentials(
     /// Gets or sets the secret.
     /// </summary>
     public string? Secret { get; set; } = secret;
-    
+
     /// <summary>
     /// Gets or sets the Azure AD tenant ID for single-tenant applications.
     /// </summary>
-    public string? TenantId { get; set; } = tenantId;
+    public string? Tenant { get; set; } = tenant;
 }

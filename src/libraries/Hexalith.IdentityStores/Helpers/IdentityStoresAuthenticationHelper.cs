@@ -10,7 +10,6 @@ using System;
 using Hexalith.IdentityStores.Configurations;
 
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -57,12 +56,12 @@ public static class IdentityStoresAuthenticationHelper
                 {
                     options.ClientId = config.Microsoft.Id!;
                     options.ClientSecret = config.Microsoft.Secret!;
-                    
+
                     // Set tenant-specific configuration if provided
-                    if (!string.IsNullOrEmpty(config.Microsoft.TenantId))
+                    if (!string.IsNullOrEmpty(config.Microsoft.Tenant))
                     {
-                        options.AuthorizationEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.TenantId}/oauth2/v2.0/authorize";
-                        options.TokenEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.TenantId}/oauth2/v2.0/token";
+                        options.AuthorizationEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.Tenant}/oauth2/v2.0/authorize";
+                        options.TokenEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.Tenant}/oauth2/v2.0/token";
                     }
                 });
         }

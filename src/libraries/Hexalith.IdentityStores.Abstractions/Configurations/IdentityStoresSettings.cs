@@ -11,12 +11,14 @@ using Hexalith.Commons.Configurations;
 /// Security settings.
 /// </summary>
 /// <param name="microsoft">The Microsoft authentication credentials.</param>
+/// <param name="microsoftOidc">The Microsoft OIDC authentication credentials.</param>
 /// <param name="github">The GitHub authentication credentials.</param>
 /// <param name="google">The Google authentication credentials.</param>
 /// <param name="facebook">The Facebook authentication credentials.</param>
 /// <param name="x">The X authentication credentials.</param>
 public class IdentityStoresSettings(
     AuthenticationCredentials? microsoft,
+    AuthenticationCredentials? microsoftOidc,
     AuthenticationCredentials? github,
     AuthenticationCredentials? google,
     AuthenticationCredentials? facebook,
@@ -26,7 +28,7 @@ public class IdentityStoresSettings(
     /// Initializes a new instance of the <see cref="IdentityStoresSettings"/> class.
     /// </summary>
     public IdentityStoresSettings()
-        : this(null, null, null, null, null)
+        : this(null, null, null, null, null, null)
     {
     }
 
@@ -53,7 +55,7 @@ public class IdentityStoresSettings(
     /// <summary>
     /// Gets or sets the Microsoft OIDC authentication credentials.
     /// </summary>
-    public AuthenticationCredentials? MicrosoftOidc { get; set; } = microsoft;
+    public AuthenticationCredentials? MicrosoftOidc { get; set; } = microsoftOidc;
 
     /// <summary>
     /// Gets or sets the X authentication credentials.

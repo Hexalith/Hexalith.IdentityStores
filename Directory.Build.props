@@ -2,13 +2,14 @@
   <PropertyGroup>
     <!-- Define a property to store the path of the parent Directory.Build.props. -->
     <ParentDirectoryBuildProps>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</ParentDirectoryBuildProps>
+    <HexalithBuildProps>$(MSBuildThisFileDirectory)Hexalith.Builds/Hexalith.Build.props</HexalithBuildProps>
   </PropertyGroup>
 
   <!-- Import the parent Directory.Build.props file if it exists -->
   <Import Project="$(ParentDirectoryBuildProps)" Condition="Exists('$(ParentDirectoryBuildProps)')" />
 
   <!-- Import the Hexalith.Build.props file in Hexalith.Builds. This file must exist. -->
-  <Import Project="$(MSBuildThisFileDirectory)Hexalith.Builds/Hexalith.Build.props" />
+  <Import Project="$(HexalithBuildProps)" Condition="Exists('$(HexalithBuildProps)')" />
 
   <PropertyGroup>
     <Product>Hexalith.IdentityStores</Product>

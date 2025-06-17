@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup>
+    <!-- Define a property to store the path of the parent Directory.Build.props. -->
+    <ParentDirectoryPackagesProps>$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../'))</ParentDirectoryPackagesProps>
+  </PropertyGroup>
+
+  <!-- Import the parent Directory.Build.props file if it exists -->
+  <Import Project="$(ParentDirectoryPackagesProps)" Condition="Exists('$(ParentDirectoryPackagesProps)')" />
+  <!-- Import Hexalith.Builds when parent Directory.Build.props not found -->
+  <Import Project="Hexalith.Builds/Props/Hexalith.Package.props" Condition="!Exists('$(ParentDirectoryPackagesProps)')" />
+  <ItemGroup>
+    <PackageVersion Include="Hexalith.Application.Partitions.Abstractions" Version="1.67.3" />
+    <PackageVersion Include="Hexalith.Application.Sessions.Abstractions" Version="1.67.3" />
+    <PackageVersion Include="Hexalith.Infrastructure.DaprRuntime" Version="1.67.3" />
+    <PackageVersion Include="Hexalith.NetAspire.Hosting" Version="1.1.0" />
+    <PackageVersion Include="Hexalith.UI.Components" Version="1.67.3" />
+  </ItemGroup>
+</Project>

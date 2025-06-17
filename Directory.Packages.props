@@ -1,6 +1,13 @@
 ﻿<Project>
+  <PropertyGroup>
+    <LocalHexalithPackageProps>$(MSBuildThisFileDirectory)Hexalith.Builds/Props/Directory.Packages.props</LocalHexalithPackageProps>
+    <ParentHexalithPackageProps>$(MSBuildThisFileDirectory)../Hexalith.Builds/Props/Directory.Packages.props</ParentHexalithPackageProps>
+    <ParentPackageProps>$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)..'))</ParentPackageProps>
+  </PropertyGroup>
   <!-- Import the Directory.Package.props file in Hexalith.Builds. -->
-  <Import Project="$(MSBuildThisFileDirectory)Hexalith.Builds/Props/Directory.Packages.props" />
+  <Import Project="$(ParentPackageProps)" Condition="Exists('$(ParentPackageProps)')" />
+  <Import Project="$(LocalHexalithPackageProps)" Condition="Exists('$(LocalHexalithPackageProps)')" />
+  <Import Project="$(ParentHexalithPackageProps)" Condition="!Exists('$(LocalHexalithPackageProps)') AND Exists('$(ParentHexalithPackageProps)')" />
   <ItemGroup>
     <PackageVersion Include="Hexalith.Application.Partitions.Abstractions" Version="1.67.3" />
     <PackageVersion Include="Hexalith.Application.Sessions.Abstractions" Version="1.67.3" />

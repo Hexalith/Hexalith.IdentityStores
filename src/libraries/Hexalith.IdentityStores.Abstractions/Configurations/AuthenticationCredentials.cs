@@ -15,17 +15,19 @@ using System.Text.Json.Serialization;
 /// <param name="secret">The secret.</param>
 /// <param name="tenant">The Azure AD tenant ID for single-tenant applications.</param>
 /// <param name="callbackPath">The callback path.</param>
+/// <param name="certificateThumbprint">The thumbprint of the certificate to use for client authentication.</param>
 public class AuthenticationCredentials(
     string? id,
     string? secret,
     string? tenant,
-    string? callbackPath)
+    string? callbackPath,
+    string? certificateThumbprint)
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AuthenticationCredentials"/> class.
     /// </summary>
     public AuthenticationCredentials()
-        : this(null, null, null, null)
+        : this(null, null, null, null, null)
     {
     }
 
@@ -35,11 +37,16 @@ public class AuthenticationCredentials(
     public string? CallbackPath { get; set; } = callbackPath;
 
     /// <summary>
+    /// Gets or sets the certificate thumbprint for client authentication.
+    /// </summary>
+    public string? CertificateThumbprint { get; set; } = certificateThumbprint;
+
+    /// <summary>
     /// Gets a value indicating whether the credentials are enabled.
     /// </summary>
     [IgnoreDataMember]
     [JsonIgnore]
-    public bool Enabled => !string.IsNullOrWhiteSpace(Id) && !string.IsNullOrWhiteSpace(Secret);
+    public bool Enabled => !string.IsNullOrWhiteSpace(Id) && (!string.IsNullOrWhiteSpace(Secret) || !string.IsNullOrWhiteSpace(CertificateThumbprint));
 
     /// <summary>
     /// Gets or sets the identifier.

@@ -3,6 +3,11 @@
    <TargetFramework>net9.0</TargetFramework>
    <NoWarn>$(NoWarn);VSTHRD002;</NoWarn>
  </PropertyGroup>  
+ <ItemGroup>
+   <Compile Remove="Extensions\**" />
+   <EmbeddedResource Remove="Extensions\**" />
+   <None Remove="Extensions\**" />
+ </ItemGroup>  
  <ItemGroup>  
    <PackageReference Include="AspNet.Security.OAuth.GitHub" />  
    <PackageReference Include="AspNet.Security.OAuth.Twitter" />  
@@ -12,12 +17,10 @@
    <PackageReference Include="Hexalith.Infrastructure.DaprRuntime" />  
    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" />  
    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" />  
+   <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />  
    <PackageReference Include="Microsoft.Identity.Web" />  
  </ItemGroup>  
  <ItemGroup>  
    <ProjectReference Include="..\Hexalith.IdentityStores.Abstractions\Hexalith.IdentityStores.Abstractions.csproj" />  
- </ItemGroup>  
- <ItemGroup>
-   <Folder Include="Extensions\" />
  </ItemGroup>  
 </Project>

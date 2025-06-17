@@ -25,6 +25,8 @@ public static class IdentityStoresAuthenticationHelper
     /// <param name="services">The IServiceCollection to add authentication to.</param>
     /// <param name="configuration">The configuration containing the Dapr identity store settings.</param>
     /// <returns>The IServiceCollection with the added authentication services.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when configuration is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the specified certificate is not found.</exception>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S1541:Methods and properties should not be too complex", Justification = "Not complex")]
     public static IServiceCollection AddIdentityStoresAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
@@ -37,49 +39,67 @@ public static class IdentityStoresAuthenticationHelper
             return services;
         }
 
-        AuthenticationBuilder authentication = services.AddAuthentication().AddCookie(options =>
-        {
-            options.ExpireTimeSpan = TimeSpan.FromHours(12);
-            options.SlidingExpiration = true;
-        });
+        AuthenticationBuilder authentication = services.AddAuthentication();
 
         if (config.MicrosoftOidc?.Enabled == true)
         {
-            authentication = authentication.AddOpenIdConnect(nameof(config.MicrosoftOidc), options =>
+            // if (!string.IsNullOrWhiteSpace(config.MicrosoftOidc.CertificateThumbprint))
+            // {
+            //    using var store = new X509Store(StoreName.CertificateAuthority, StoreLocation.LocalMachine);
+            //    store.Open(OpenFlags.ReadOnly);
+            //    if (store.Certificates
+            //        .Find(X509FindType.FindByThumbprint, config.MicrosoftOidc.CertificateThumbprint, false)
+            //        .OfType<X509Certificate2>()
+            //        .FirstOrDefault() == null)
+            //    {
+            //        throw new InvalidOperationException($"Certificate with thumbprint {config.MicrosoftOidc.CertificateThumbprint} not found in LocalMachine/My store.");
+            //    }
+
+            // msIdentityOptions.ClientCertificates =
+            //    [
+            //        new()
+            //        {
+            //            SourceType = CertificateSource.StoreWithThumbprint,
+            //            CertificateStorePath = $"{store.Location}/{store.Name}",
+            //            CertificateThumbprint = config.MicrosoftOidc.CertificateThumbprint,
+            //        },
+            //    ];
+            // }
+            // else if (!string.IsNullOrWhiteSpace(config.MicrosoftOidc.Secret))
+            // {
+            //    msIdentityOptions.ClientSecret = config.MicrosoftOidc.Secret;
+            // }
+            _ = authentication.AddOpenIdConnect(
+                nameof(config.MicrosoftOidc),
+                "Microsoft OIDC",
+                options =>
             {
-                // Core endpoints ----------------------------------------------------------------
-                string tenant = string.IsNullOrWhiteSpace(config.MicrosoftOidc.Tenant)
-                                    ? "common"
-                                    : config.MicrosoftOidc.Tenant;
-                options.Authority = $"https://login.microsoftonline.com/{tenant}/v2.0";
-                options.MetadataAddress = $"{options.Authority}/.well-known/openid-configuration";
-
-                // App registration credentials --------------------------------------------------
                 options.ClientId = config.MicrosoftOidc.Id!;
-                options.ClientSecret = config.MicrosoftOidc.Secret;         // nullable for public clients
-
-                // Protocol details --------------------------------------------------------------
-                options.ResponseType = OpenIdConnectResponseType.Code;      // Auth‑code flow (OIDC/OAuth2)
-                options.SaveTokens = true;                                // Persist id_token & access_token in auth cookie
+                options.ClientSecret = config.MicrosoftOidc.Secret!;
                 options.CallbackPath = string.IsNullOrWhiteSpace(config.MicrosoftOidc.CallbackPath)
-                                            ? "/signin-oidc" // default
-                                            : config.MicrosoftOidc.CallbackPath;
-
-                // Requested scopes --------------------------------------------------------------
-                options.Scope.Clear();                                      // start from scratch
+                    ? "/signin-oidc"
+                    : config.MicrosoftOidc.CallbackPath;
+                options.Authority = $"https://login.microsoftonline.com/{config.MicrosoftOidc.Tenant}/v2.0";
+                options.ResponseType = OpenIdConnectResponseType.Code;
+                options.SaveTokens = true;
+                options.Scope.Clear();
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
-
-                // options.Scope.Add("offline_access");                    // refresh tokens (web apps)
-                // options.Scope.Add("api://<API‑App‑Id>/access_as_user"); // call downstream API
-
-                // Claim handling ----------------------------------------------------------------
                 options.TokenValidationParameters.NameClaimType = "name";
-                options.TokenValidationParameters.ValidateIssuer = false;   // for multi‑tenant – tighten for single tenant
-
-                // Optional: map extra claims from id_token
-                options.MapInboundClaims = false;   // keep original claim types
+                options.TokenValidationParameters.ValidateIssuer = false;
+                options.MapInboundClaims = false;
+                options.RequireHttpsMetadata = true;
+                options.UseTokenLifetime = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+            });
+        }
+        else
+        {
+            authentication = authentication.AddCookie(options =>
+            {
+                options.ExpireTimeSpan = TimeSpan.FromHours(12);
+                options.SlidingExpiration = true;
             });
         }
 

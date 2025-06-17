@@ -6,6 +6,10 @@
 namespace Hexalith.IdentityStores.Helpers;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
 using Hexalith.IdentityStores.Configurations;
 
@@ -19,6 +23,114 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 /// </summary>
 public static class IdentityStoresAuthenticationHelper
 {
+    /// <summary>
+    /// Adds Microsoft Entra OIDC authentication to the specified AuthenticationBuilder.
+    /// </summary>
+    /// <param name="authentication">The AuthenticationBuilder to add the OIDC authentication to.</param>
+    /// <param name="credentials">The authentication credentials containing the OIDC settings.</param>
+    /// <returns>The AuthenticationBuilder with the added OIDC authentication.</returns>
+    public static AuthenticationBuilder AddEntraOidc(this AuthenticationBuilder authentication, AuthenticationCredentials credentials)
+        => _ = authentication.AddOpenIdConnect(
+                nameof(credentials),
+                "Microsoft OIDC",
+                options =>
+            {
+                options.ClientId = credentials.Id!;
+                string tenant = credentials.Tenant?.Trim() ?? "common";
+
+                // Use certificate if thumbprint is provided, otherwise use secret
+                if (!string.IsNullOrWhiteSpace(credentials.CertificateThumbprint))
+                {
+                    X509Certificate2? cert = null;
+
+                    // Try LocalMachine store first
+                    using (var store = new X509Store(StoreName.My, StoreLocation.LocalMachine))
+                    {
+                        store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
+                        var certificates = store.Certificates
+                            .Find(X509FindType.FindByThumbprint, credentials.CertificateThumbprint, false);
+
+                        if (certificates.Count > 0)
+                        {
+                            cert = certificates[0];
+                        }
+                    }
+
+                    // If not found in LocalMachine, try CurrentUser store
+                    if (cert == null)
+                    {
+                        using (var store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+                        {
+                            store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
+                            var certificates = store.Certificates
+                                .Find(X509FindType.FindByThumbprint, credentials.CertificateThumbprint, false);
+
+                            if (certificates.Count > 0)
+                            {
+                                cert = certificates[0];
+                            }
+                        }
+                    }
+
+                    if (cert == null)
+                    {
+                        throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' not found in either LocalMachine/My or CurrentUser/My certificate stores.");
+                    }
+
+                    if (!cert.HasPrivateKey)
+                    {
+                        throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' does not have a private key. Please ensure the certificate was imported with its private key and that the application has permission to access it.");
+                    }
+
+                    // Use certificate for client authentication (do not set ClientSecret when using certificate)
+                    var tokenHandler = new Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler();
+                    string clientId = credentials.Id!;
+
+                    options.Events = new Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectEvents
+                    {
+                        OnAuthorizationCodeReceived = context =>
+                        {
+                            context.TokenEndpointRequest?.SetParameter("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
+                            context.TokenEndpointRequest?.SetParameter("client_assertion", tokenHandler.CreateToken(
+                                new Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor
+                                {
+                                    Issuer = clientId,
+                                    Audience = $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token",
+                                    Claims = new Dictionary<string, object>
+                                    {
+                                        { "sub", clientId },
+                                        { "jti", Guid.NewGuid().ToString() },
+                                    },
+                                    Expires = DateTime.UtcNow.AddMinutes(5),
+                                    SigningCredentials = new Microsoft.IdentityModel.Tokens.X509SigningCredentials(cert),
+                                }));
+                            return Task.CompletedTask;
+                        },
+                    };
+                }
+                else if (!string.IsNullOrWhiteSpace(credentials.Secret))
+                {
+                    options.ClientSecret = credentials.Secret!;
+                }
+
+                options.CallbackPath = string.IsNullOrWhiteSpace(credentials.CallbackPath)
+                    ? "/signin-oidc"
+                    : credentials.CallbackPath;
+                options.Authority = $"https://login.microsoftonline.com/{tenant}/v2.0";
+                options.ResponseType = OpenIdConnectResponseType.Code;
+                options.SaveTokens = true;
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
+                options.TokenValidationParameters.NameClaimType = "name";
+                options.TokenValidationParameters.ValidateIssuer = false;
+                options.MapInboundClaims = false;
+                options.RequireHttpsMetadata = true;
+                options.UseTokenLifetime = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+            });
+
     /// <summary>
     /// Adds Dapr identity store authentication to the specified IServiceCollection.
     /// </summary>
@@ -43,56 +155,7 @@ public static class IdentityStoresAuthenticationHelper
 
         if (config.MicrosoftOidc?.Enabled == true)
         {
-            // if (!string.IsNullOrWhiteSpace(config.MicrosoftOidc.CertificateThumbprint))
-            // {
-            //    using var store = new X509Store(StoreName.CertificateAuthority, StoreLocation.LocalMachine);
-            //    store.Open(OpenFlags.ReadOnly);
-            //    if (store.Certificates
-            //        .Find(X509FindType.FindByThumbprint, config.MicrosoftOidc.CertificateThumbprint, false)
-            //        .OfType<X509Certificate2>()
-            //        .FirstOrDefault() == null)
-            //    {
-            //        throw new InvalidOperationException($"Certificate with thumbprint {config.MicrosoftOidc.CertificateThumbprint} not found in LocalMachine/My store.");
-            //    }
-
-            // msIdentityOptions.ClientCertificates =
-            //    [
-            //        new()
-            //        {
-            //            SourceType = CertificateSource.StoreWithThumbprint,
-            //            CertificateStorePath = $"{store.Location}/{store.Name}",
-            //            CertificateThumbprint = config.MicrosoftOidc.CertificateThumbprint,
-            //        },
-            //    ];
-            // }
-            // else if (!string.IsNullOrWhiteSpace(config.MicrosoftOidc.Secret))
-            // {
-            //    msIdentityOptions.ClientSecret = config.MicrosoftOidc.Secret;
-            // }
-            _ = authentication.AddOpenIdConnect(
-                nameof(config.MicrosoftOidc),
-                "Microsoft OIDC",
-                options =>
-            {
-                options.ClientId = config.MicrosoftOidc.Id!;
-                options.ClientSecret = config.MicrosoftOidc.Secret!;
-                options.CallbackPath = string.IsNullOrWhiteSpace(config.MicrosoftOidc.CallbackPath)
-                    ? "/signin-oidc"
-                    : config.MicrosoftOidc.CallbackPath;
-                options.Authority = $"https://login.microsoftonline.com/{config.MicrosoftOidc.Tenant}/v2.0";
-                options.ResponseType = OpenIdConnectResponseType.Code;
-                options.SaveTokens = true;
-                options.Scope.Clear();
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
-                options.Scope.Add("email");
-                options.TokenValidationParameters.NameClaimType = "name";
-                options.TokenValidationParameters.ValidateIssuer = false;
-                options.MapInboundClaims = false;
-                options.RequireHttpsMetadata = true;
-                options.UseTokenLifetime = true;
-                options.GetClaimsFromUserInfoEndpoint = true;
-            });
+            authentication = authentication.AddEntraOidc(config.MicrosoftOidc);
         }
         else
         {

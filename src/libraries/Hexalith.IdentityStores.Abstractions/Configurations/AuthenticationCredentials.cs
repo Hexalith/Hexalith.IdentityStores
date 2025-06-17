@@ -14,18 +14,25 @@ using System.Text.Json.Serialization;
 /// <param name="id">The identifier.</param>
 /// <param name="secret">The secret.</param>
 /// <param name="tenant">The Azure AD tenant ID for single-tenant applications.</param>
+/// <param name="callbackPath">The callback path.</param>
 public class AuthenticationCredentials(
     string? id,
     string? secret,
-    string? tenant)
+    string? tenant,
+    string? callbackPath)
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AuthenticationCredentials"/> class.
     /// </summary>
     public AuthenticationCredentials()
-        : this(null, null, null)
+        : this(null, null, null, null)
     {
     }
+
+    /// <summary>
+    /// Gets or sets the callback path.
+    /// </summary>
+    public string? CallbackPath { get; set; } = callbackPath;
 
     /// <summary>
     /// Gets a value indicating whether the credentials are enabled.

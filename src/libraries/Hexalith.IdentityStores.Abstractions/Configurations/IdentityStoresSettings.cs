@@ -51,6 +51,11 @@ public class IdentityStoresSettings(
     public AuthenticationCredentials? Microsoft { get; set; } = microsoft;
 
     /// <summary>
+    /// Gets or sets the Microsoft OIDC authentication credentials.
+    /// </summary>
+    public AuthenticationCredentials? MicrosoftOidc { get; set; } = microsoft;
+
+    /// <summary>
     /// Gets or sets the X authentication credentials.
     /// </summary>
     public AuthenticationCredentials? X { get; set; } = x;

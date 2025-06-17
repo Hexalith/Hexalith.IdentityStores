@@ -12,6 +12,7 @@ using Hexalith.IdentityStores.Configurations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 /// <summary>
 /// Provides helper methods for partition actors.
@@ -41,6 +42,47 @@ public static class IdentityStoresAuthenticationHelper
             options.ExpireTimeSpan = TimeSpan.FromHours(12);
             options.SlidingExpiration = true;
         });
+
+        if (config.MicrosoftOidc?.Enabled == true)
+        {
+            authentication = authentication.AddOpenIdConnect(nameof(config.MicrosoftOidc), options =>
+            {
+                // Core endpoints ----------------------------------------------------------------
+                string tenant = string.IsNullOrWhiteSpace(config.MicrosoftOidc.Tenant)
+                                    ? "common"
+                                    : config.MicrosoftOidc.Tenant;
+                options.Authority = $"https://login.microsoftonline.com/{tenant}/v2.0";
+                options.MetadataAddress = $"{options.Authority}/.well-known/openid-configuration";
+
+                // App registration credentials --------------------------------------------------
+                options.ClientId = config.MicrosoftOidc.Id!;
+                options.ClientSecret = config.MicrosoftOidc.Secret;         // nullable for public clients
+
+                // Protocol details --------------------------------------------------------------
+                options.ResponseType = OpenIdConnectResponseType.Code;      // Auth‑code flow (OIDC/OAuth2)
+                options.SaveTokens = true;                                // Persist id_token & access_token in auth cookie
+                options.CallbackPath = string.IsNullOrWhiteSpace(config.MicrosoftOidc.CallbackPath)
+                                            ? "/signin-oidc" // default
+                                            : config.MicrosoftOidc.CallbackPath;
+
+                // Requested scopes --------------------------------------------------------------
+                options.Scope.Clear();                                      // start from scratch
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
+
+                // options.Scope.Add("offline_access");                    // refresh tokens (web apps)
+                // options.Scope.Add("api://<API‑App‑Id>/access_as_user"); // call downstream API
+
+                // Claim handling ----------------------------------------------------------------
+                options.TokenValidationParameters.NameClaimType = "name";
+                options.TokenValidationParameters.ValidateIssuer = false;   // for multi‑tenant – tighten for single tenant
+
+                // Optional: map extra claims from id_token
+                options.MapInboundClaims = false;   // keep original claim types
+            });
+        }
+
         if (config.Google?.Enabled == true)
         {
             authentication = authentication.AddGoogleOpenIdConnect(options =>

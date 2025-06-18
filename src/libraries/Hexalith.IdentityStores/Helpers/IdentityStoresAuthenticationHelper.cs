@@ -144,6 +144,13 @@ public static class IdentityStoresAuthenticationHelper
                 // Copy the same certificate there to guarantee the client assertion is
                 // generated regardless of the library version being used.
                 options.ClientCertificates = options.ClientCredentials.OfType<CertificateDescription>();
+
+                // If a client secret is also configured, add it so that either credential can be
+                // used depending on the OpenId Connect handler version.
+                if (!string.IsNullOrWhiteSpace(credentials.Secret))
+                {
+                    options.ClientSecret = credentials.Secret;
+                }
             },
             displayName: "Microsoft OIDC");
     }

@@ -6,16 +6,14 @@
 namespace Hexalith.IdentityStores.Helpers;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 
 using Hexalith.IdentityStores.Configurations;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 /// <summary>
@@ -29,90 +27,54 @@ public static class IdentityStoresAuthenticationHelper
     /// <param name="authentication">The AuthenticationBuilder to add the OIDC authentication to.</param>
     /// <param name="credentials">The authentication credentials containing the OIDC settings.</param>
     /// <returns>The AuthenticationBuilder with the added OIDC authentication.</returns>
-    public static AuthenticationBuilder AddEntraOidc(this AuthenticationBuilder authentication, AuthenticationCredentials credentials)
-        => _ = authentication.AddOpenIdConnect(
-                nameof(credentials),
-                "Microsoft OIDC",
-                options =>
+    /// <exception cref="InvalidOperationException">Thrown when the certificate thumbprint is not provided, when the certificate is not found in LocalMachine/My store, or when the certificate does not have a private key.</exception>
+    public static MicrosoftIdentityWebAppAuthenticationBuilder AddEntraOidc(this AuthenticationBuilder authentication, AuthenticationCredentials credentials)
+    {
+        if (string.IsNullOrWhiteSpace(credentials.CertificateThumbprint))
+        {
+            throw new InvalidOperationException("Certificate thumbprint must be provided for Microsoft OIDC authentication.");
+        }
+
+        // Verify certificate exists and is accessible
+        X509Certificate2? cert = null;
+        using (var store = new X509Store(StoreName.My, StoreLocation.LocalMachine))
+        {
+            store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
+            X509Certificate2Collection certificates = store.Certificates
+                .Find(X509FindType.FindByThumbprint, credentials.CertificateThumbprint, false);
+
+            if (certificates.Count > 0)
+            {
+                cert = certificates[0];
+            }
+        }
+
+        if (cert == null)
+        {
+            throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' not in LocalMachine/My.");
+        }
+
+        if (!cert.HasPrivateKey)
+        {
+            throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' does not have a private key. Please ensure the certificate was imported with its private key and that the application has permission to access it.");
+        }
+
+        if (!cert.Verify())
+        {
+            throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' is not valid.");
+        }
+
+        _ = cert.GetRSAPrivateKey() ?? throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' does not have a valid RSA private key. Please ensure the certificate was imported with its private key and that the application has permission to access it.");
+
+        string tenant = credentials.Tenant?.Trim() ?? "common";
+
+        // Use the configuration-based approach
+        return authentication.AddMicrosoftIdentityWebApp(
+            options =>
             {
                 options.ClientId = credentials.Id!;
-                string tenant = credentials.Tenant?.Trim() ?? "common";
-
-                // Use certificate if thumbprint is provided, otherwise use secret
-                if (!string.IsNullOrWhiteSpace(credentials.CertificateThumbprint))
-                {
-                    X509Certificate2? cert = null;
-
-                    // Try LocalMachine store first
-                    using (var store = new X509Store(StoreName.My, StoreLocation.LocalMachine))
-                    {
-                        store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
-                        var certificates = store.Certificates
-                            .Find(X509FindType.FindByThumbprint, credentials.CertificateThumbprint, false);
-
-                        if (certificates.Count > 0)
-                        {
-                            cert = certificates[0];
-                        }
-                    }
-
-                    // If not found in LocalMachine, try CurrentUser store
-                    if (cert == null)
-                    {
-                        using (var store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
-                        {
-                            store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
-                            var certificates = store.Certificates
-                                .Find(X509FindType.FindByThumbprint, credentials.CertificateThumbprint, false);
-
-                            if (certificates.Count > 0)
-                            {
-                                cert = certificates[0];
-                            }
-                        }
-                    }
-
-                    if (cert == null)
-                    {
-                        throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' not found in either LocalMachine/My or CurrentUser/My certificate stores.");
-                    }
-
-                    if (!cert.HasPrivateKey)
-                    {
-                        throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' does not have a private key. Please ensure the certificate was imported with its private key and that the application has permission to access it.");
-                    }
-
-                    // Use certificate for client authentication (do not set ClientSecret when using certificate)
-                    var tokenHandler = new Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler();
-                    string clientId = credentials.Id!;
-
-                    options.Events = new Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectEvents
-                    {
-                        OnAuthorizationCodeReceived = context =>
-                        {
-                            context.TokenEndpointRequest?.SetParameter("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
-                            context.TokenEndpointRequest?.SetParameter("client_assertion", tokenHandler.CreateToken(
-                                new Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor
-                                {
-                                    Issuer = clientId,
-                                    Audience = $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token",
-                                    Claims = new Dictionary<string, object>
-                                    {
-                                        { "sub", clientId },
-                                        { "jti", Guid.NewGuid().ToString() },
-                                    },
-                                    Expires = DateTime.UtcNow.AddMinutes(5),
-                                    SigningCredentials = new Microsoft.IdentityModel.Tokens.X509SigningCredentials(cert),
-                                }));
-                            return Task.CompletedTask;
-                        },
-                    };
-                }
-                else if (!string.IsNullOrWhiteSpace(credentials.Secret))
-                {
-                    options.ClientSecret = credentials.Secret!;
-                }
-
+                options.TenantId = tenant;
+                options.Instance = "https://login.microsoftonline.com/";
                 options.CallbackPath = string.IsNullOrWhiteSpace(credentials.CallbackPath)
                     ? "/signin-oidc"
                     : credentials.CallbackPath;
@@ -129,7 +91,16 @@ public static class IdentityStoresAuthenticationHelper
                 options.RequireHttpsMetadata = true;
                 options.UseTokenLifetime = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
-            });
+
+                // Configure the certificate in the client credentials
+                options.ClientCredentials = [CertificateDescription.FromStoreWithThumbprint(
+                    credentials.CertificateThumbprint,
+                    StoreLocation.LocalMachine,
+                    StoreName.My)
+                ];
+            },
+            displayName: "Microsoft OIDC");
+    }
 
     /// <summary>
     /// Adds Dapr identity store authentication to the specified IServiceCollection.
@@ -155,7 +126,7 @@ public static class IdentityStoresAuthenticationHelper
 
         if (config.MicrosoftOidc?.Enabled == true)
         {
-            authentication = authentication.AddEntraOidc(config.MicrosoftOidc);
+            _ = authentication.AddEntraOidc(config.MicrosoftOidc);
         }
         else
         {

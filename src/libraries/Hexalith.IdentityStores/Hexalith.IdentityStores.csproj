@@ -16,8 +16,10 @@
    <PackageReference Include="Hexalith.Application.Sessions.Abstractions" />  
    <PackageReference Include="Hexalith.Infrastructure.DaprRuntime" />  
    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" />  
+   <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" />  
    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />  
+   <PackageReference Include="Microsoft.AspNetCore.DataProtection" />
    <PackageReference Include="Microsoft.Identity.Web" />  
  </ItemGroup>  
  <ItemGroup>  

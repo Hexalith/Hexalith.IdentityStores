@@ -7,11 +7,13 @@ namespace Hexalith.IdentityStores.Helpers;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
 
 using Hexalith.IdentityStores.Configurations;
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
@@ -100,7 +102,7 @@ public static class IdentityStoresAuthenticationHelper
 
         _ = cert.GetRSAPrivateKey() ?? throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' does not have a valid RSA private key. Please ensure the certificate was imported with its private key and that the application has permission to access it.");
 
-        string tenant = credentials.Tenant?.Trim() ?? "common";
+        string tenant = credentials.Tenant?.Trim() ?? throw new InvalidOperationException("Tenant must be provided for Microsoft OIDC authentication.");
 
         // Use the configuration-based approach
         return authentication.AddMicrosoftIdentityWebApp(
@@ -119,12 +121,6 @@ public static class IdentityStoresAuthenticationHelper
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
-                options.TokenValidationParameters.NameClaimType = "name";
-                options.TokenValidationParameters.ValidateIssuer = false;
-                options.MapInboundClaims = false;
-                options.RequireHttpsMetadata = true;
-                options.UseTokenLifetime = true;
-                options.GetClaimsFromUserInfoEndpoint = true;
 
                 // Send the public certificate (x5c) in the token request so Azure AD can
                 // validate the client assertion without requiring the certificate to be
@@ -138,20 +134,8 @@ public static class IdentityStoresAuthenticationHelper
                     StoreLocation.LocalMachine,
                     StoreName.My)
                 ];
-
-                // Some versions of Microsoft.Identity.Web still rely on the older
-                // ClientCertificates collection when redeeming the authorization code.
-                // Copy the same certificate there to guarantee the client assertion is
-                // generated regardless of the library version being used.
-                options.ClientCertificates = options.ClientCredentials.OfType<CertificateDescription>();
-
-                // If a client secret is also configured, add it so that either credential can be
-                // used depending on the OpenId Connect handler version.
-                if (!string.IsNullOrWhiteSpace(credentials.Secret))
-                {
-                    options.ClientSecret = credentials.Secret;
-                }
             },
+            subscribeToOpenIdConnectMiddlewareDiagnosticsEvents: true,
             displayName: "Microsoft OIDC");
     }
 
@@ -175,6 +159,11 @@ public static class IdentityStoresAuthenticationHelper
             return services;
         }
 
+        // Configure data protection to prevent state validation errors
+        _ = services.AddDataProtection()
+            .SetApplicationName("HexalithIdentityStores")
+            .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "HexalithIdentityStores", "DataProtection-Keys")));
+
         AuthenticationBuilder authentication = services.AddAuthentication();
 
         if (config.MicrosoftOidc?.Enabled == true)
@@ -192,26 +181,14 @@ public static class IdentityStoresAuthenticationHelper
 
         if (config.Google?.Enabled == true)
         {
-            authentication = authentication.AddGoogleOpenIdConnect(options =>
+            authentication = authentication.AddGoogle(options =>
                 {
                     options.ClientId = config.Google.Id!;
                     options.ClientSecret = config.Google.Secret!;
-                });
-        }
-
-        if (config.Microsoft?.Enabled == true)
-        {
-            authentication = authentication.AddMicrosoftAccount(options =>
-                {
-                    options.ClientId = config.Microsoft.Id!;
-                    options.ClientSecret = config.Microsoft.Secret!;
-
-                    // Set tenant-specific configuration if provided
-                    if (!string.IsNullOrEmpty(config.Microsoft.Tenant))
-                    {
-                        options.AuthorizationEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.Tenant}/oauth2/v2.0/authorize";
-                        options.TokenEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.Tenant}/oauth2/v2.0/token";
-                    }
+                    options.CallbackPath = string.IsNullOrWhiteSpace(config.Google.CallbackPath)
+                        ? null
+                        : config.Google.CallbackPath;
+                    options.SaveTokens = true;
                 });
         }
 

@@ -6,6 +6,7 @@
 namespace Hexalith.IdentityStores.Helpers;
 
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
 using Hexalith.IdentityStores.Configurations;
@@ -59,9 +60,42 @@ public static class IdentityStoresAuthenticationHelper
             throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' does not have a private key. Please ensure the certificate was imported with its private key and that the application has permission to access it.");
         }
 
-        if (!cert.Verify())
+        // Validate certificate with more detailed error reporting
+        bool isValid = cert.Verify();
+        if (!isValid)
         {
-            throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' is not valid.");
+            // Check specific validation issues
+            var validationErrors = new List<string>();
+
+            // Check if certificate is expired
+            if (DateTime.Now < cert.NotBefore)
+            {
+                validationErrors.Add($"Certificate is not yet valid. Valid from: {cert.NotBefore}");
+            }
+            else if (DateTime.Now > cert.NotAfter)
+            {
+                validationErrors.Add($"Certificate has expired. Valid until: {cert.NotAfter}");
+            }
+
+            // Check if it's self-signed
+            if (cert.Issuer == cert.Subject)
+            {
+                validationErrors.Add("Certificate is self-signed");
+            }
+
+            // In development environments, we might want to allow invalid certificates
+            bool allowInvalidCertificates = credentials.AllowInvalidCertificates ?? false;
+
+            if (!allowInvalidCertificates)
+            {
+                string errorDetails = validationErrors.Count > 0
+                    ? $" Issues found: {string.Join(", ", validationErrors)}"
+                    : " The certificate chain could not be validated.";
+
+                throw new InvalidOperationException(
+                    $"Certificate with thumbprint '{credentials.CertificateThumbprint}' is not valid.{errorDetails} " +
+                    "If this is a development environment with a self-signed certificate, set 'AllowInvalidCertificates' to true in your configuration.");
+            }
         }
 
         _ = cert.GetRSAPrivateKey() ?? throw new InvalidOperationException($"Certificate with thumbprint '{credentials.CertificateThumbprint}' does not have a valid RSA private key. Please ensure the certificate was imported with its private key and that the application has permission to access it.");
@@ -79,7 +113,7 @@ public static class IdentityStoresAuthenticationHelper
                     ? "/signin-oidc"
                     : credentials.CallbackPath;
                 options.Authority = $"https://login.microsoftonline.com/{tenant}/v2.0";
-                options.ResponseType = OpenIdConnectResponseType.Code;
+                options.ResponseType = OpenIdConnectResponseType.CodeIdToken;
                 options.SaveTokens = true;
                 options.Scope.Clear();
                 options.Scope.Add("openid");
@@ -92,12 +126,24 @@ public static class IdentityStoresAuthenticationHelper
                 options.UseTokenLifetime = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
 
+                // Send the public certificate (x5c) in the token request so Azure AD can
+                // validate the client assertion without requiring the certificate to be
+                // pre-uploaded in the app registration. This avoids AADSTS50146 errors when
+                // using hybrid flow (code + id_token).
+                options.SendX5C = true;
+
                 // Configure the certificate in the client credentials
                 options.ClientCredentials = [CertificateDescription.FromStoreWithThumbprint(
                     credentials.CertificateThumbprint,
                     StoreLocation.LocalMachine,
                     StoreName.My)
                 ];
+
+                // Some versions of Microsoft.Identity.Web still rely on the older
+                // ClientCertificates collection when redeeming the authorization code.
+                // Copy the same certificate there to guarantee the client assertion is
+                // generated regardless of the library version being used.
+                options.ClientCertificates = options.ClientCredentials.OfType<CertificateDescription>();
             },
             displayName: "Microsoft OIDC");
     }

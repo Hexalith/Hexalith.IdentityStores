@@ -23,7 +23,7 @@ public class AuthenticationCredentials(
     string? tenant,
     string? callbackPath,
     string? certificateThumbprint,
-    bool? allowInvalidCertificates = null)
+    bool? allowInvalidCertificates)
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AuthenticationCredentials"/> class.

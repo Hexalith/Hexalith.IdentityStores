@@ -11,28 +11,39 @@ using Hexalith.Commons.Configurations;
 /// Security settings.
 /// </summary>
 /// <param name="microsoft">The Microsoft authentication credentials.</param>
-/// <param name="microsoftOidc">The Microsoft OIDC authentication credentials.</param>
 /// <param name="github">The GitHub authentication credentials.</param>
 /// <param name="google">The Google authentication credentials.</param>
 /// <param name="facebook">The Facebook authentication credentials.</param>
 /// <param name="x">The X authentication credentials.</param>
+/// <param name="twitter">The Twitter authentication credentials.</param>
+/// <param name="linkedIn">The LinkedIn authentication credentials.</param>
+/// <param name="instagram">The Instagram authentication credentials.</param>
+/// <param name="apple">The Apple authentication credentials.</param>
 /// <param name="dataProtectionPath">The path to the data protection store.</param>
 public class IdentityStoresSettings(
     AuthenticationCredentials? microsoft,
-    AuthenticationCredentials? microsoftOidc,
     AuthenticationCredentials? github,
     AuthenticationCredentials? google,
     AuthenticationCredentials? facebook,
     AuthenticationCredentials? x,
+    AuthenticationCredentials? twitter,
+    AuthenticationCredentials? linkedIn,
+    AuthenticationCredentials? instagram,
+    AuthenticationCredentials? apple,
     string? dataProtectionPath) : ISettings
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="IdentityStoresSettings"/> class.
     /// </summary>
     public IdentityStoresSettings()
-        : this(null, null, null, null, null, null, null)
+        : this(null, null, null, null, null, null, null, null, null, null)
     {
     }
+
+    /// <summary>
+    /// Gets or sets the Apple authentication credentials.
+    /// </summary>
+    public AuthenticationCredentials? Apple { get; set; } = apple;
 
     /// <summary>
     /// Gets or sets the path to the data protection store.
@@ -55,14 +66,24 @@ public class IdentityStoresSettings(
     public AuthenticationCredentials? Google { get; set; } = google;
 
     /// <summary>
+    /// Gets or sets the Instagram credentials.
+    /// </summary>
+    public AuthenticationCredentials? Instagram { get; set; } = instagram;
+
+    /// <summary>
+    /// Gets or sets the LinkedIn authentication credentials.
+    /// </summary>
+    public AuthenticationCredentials? LinkedIn { get; set; } = linkedIn;
+
+    /// <summary>
     /// Gets or sets the Microsoft authentication credentials.
     /// </summary>
     public AuthenticationCredentials? Microsoft { get; set; } = microsoft;
 
     /// <summary>
-    /// Gets or sets the Microsoft OIDC authentication credentials.
+    /// Gets or sets the Twitter authentication credentials.
     /// </summary>
-    public AuthenticationCredentials? MicrosoftOidc { get; set; } = microsoftOidc;
+    public AuthenticationCredentials? Twitter { get; set; } = twitter;
 
     /// <summary>
     /// Gets or sets the X authentication credentials.

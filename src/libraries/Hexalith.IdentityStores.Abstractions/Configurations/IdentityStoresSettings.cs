@@ -16,21 +16,28 @@ using Hexalith.Commons.Configurations;
 /// <param name="google">The Google authentication credentials.</param>
 /// <param name="facebook">The Facebook authentication credentials.</param>
 /// <param name="x">The X authentication credentials.</param>
+/// <param name="dataProtectionPath">The path to the data protection store.</param>
 public class IdentityStoresSettings(
     AuthenticationCredentials? microsoft,
     AuthenticationCredentials? microsoftOidc,
     AuthenticationCredentials? github,
     AuthenticationCredentials? google,
     AuthenticationCredentials? facebook,
-    AuthenticationCredentials? x) : ISettings
+    AuthenticationCredentials? x,
+    string? dataProtectionPath) : ISettings
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="IdentityStoresSettings"/> class.
     /// </summary>
     public IdentityStoresSettings()
-        : this(null, null, null, null, null, null)
+        : this(null, null, null, null, null, null, null)
     {
     }
+
+    /// <summary>
+    /// Gets or sets the path to the data protection store.
+    /// </summary>
+    public string? DataProtectionPath { get; set; } = dataProtectionPath;
 
     /// <summary>
     /// Gets or sets the Facebook authentication credentials.

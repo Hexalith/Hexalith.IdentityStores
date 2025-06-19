@@ -117,6 +117,7 @@ public static class IdentityStoresAuthenticationHelper
                 options.Authority = $"https://login.microsoftonline.com/{tenant}/v2.0";
                 options.ResponseType = OpenIdConnectResponseType.CodeIdToken;
                 options.SaveTokens = true;
+                options.RequireHttpsMetadata = true;
                 options.Scope.Clear();
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
@@ -159,10 +160,19 @@ public static class IdentityStoresAuthenticationHelper
             return services;
         }
 
-        // Configure data protection to prevent state validation errors
+        // Configure data protection with better directory handling
+        string dataProtectionPath = string.IsNullOrWhiteSpace(config.DataProtectionPath)
+            ? Path.Combine(AppContext.BaseDirectory, "data-protection-keys")
+            : config.DataProtectionPath;
+
+        // Ensure directory exists
+        _ = Directory.CreateDirectory(dataProtectionPath);
+
+        // Add data protection with more reliable configuration
         _ = services.AddDataProtection()
-            .SetApplicationName("HexalithIdentityStores")
-            .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "HexalithIdentityStores", "DataProtection-Keys")));
+            .SetApplicationName(nameof(Hexalith))
+            .SetDefaultKeyLifetime(TimeSpan.FromDays(30))
+            .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionPath));
 
         AuthenticationBuilder authentication = services.AddAuthentication();
 
@@ -181,14 +191,26 @@ public static class IdentityStoresAuthenticationHelper
 
         if (config.Google?.Enabled == true)
         {
-            authentication = authentication.AddGoogle(options =>
+            authentication = authentication.AddGoogleOpenIdConnect(options =>
                 {
                     options.ClientId = config.Google.Id!;
                     options.ClientSecret = config.Google.Secret!;
-                    options.CallbackPath = string.IsNullOrWhiteSpace(config.Google.CallbackPath)
-                        ? null
-                        : config.Google.CallbackPath;
-                    options.SaveTokens = true;
+                });
+        }
+
+        if (config.Microsoft?.Enabled == true)
+        {
+            authentication = authentication.AddMicrosoftAccount(options =>
+                {
+                    options.ClientId = config.Microsoft.Id!;
+                    options.ClientSecret = config.Microsoft.Secret!;
+
+                    // Set tenant-specific configuration if provided
+                    if (!string.IsNullOrEmpty(config.Microsoft.Tenant))
+                    {
+                        options.AuthorizationEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.Tenant}/oauth2/v2.0/authorize";
+                        options.TokenEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.Tenant}/oauth2/v2.0/token";
+                    }
                 });
         }
 

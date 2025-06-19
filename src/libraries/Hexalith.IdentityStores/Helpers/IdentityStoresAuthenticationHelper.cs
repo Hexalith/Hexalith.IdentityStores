@@ -12,7 +12,6 @@ using Hexalith.IdentityStores.Configurations;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -85,8 +84,6 @@ public static class IdentityStoresAuthenticationHelper
                         options.AuthorizationEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.Tenant}/oauth2/v2.0/authorize";
                         options.TokenEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.Tenant}/oauth2/v2.0/token";
                     }
-
-                    options.CorrelationCookie.SameSite = SameSiteMode.Lax;
                 });
         }
 
@@ -98,7 +95,6 @@ public static class IdentityStoresAuthenticationHelper
                     options.ClientSecret = config.Github.Secret!;
                     options.Scope.Add("read:user");
                     options.Scope.Add("user:email");
-                    options.CorrelationCookie.SameSite = SameSiteMode.Lax;
                 });
         }
 

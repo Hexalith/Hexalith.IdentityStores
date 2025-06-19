@@ -12,6 +12,7 @@ using Hexalith.IdentityStores.Configurations;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -84,6 +85,8 @@ public static class IdentityStoresAuthenticationHelper
                         options.AuthorizationEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.Tenant}/oauth2/v2.0/authorize";
                         options.TokenEndpoint = $"https://login.microsoftonline.com/{config.Microsoft.Tenant}/oauth2/v2.0/token";
                     }
+
+                    options.CorrelationCookie.SameSite = SameSiteMode.Lax;
                 });
         }
 
@@ -93,6 +96,9 @@ public static class IdentityStoresAuthenticationHelper
                 {
                     options.ClientId = config.Github.Id!;
                     options.ClientSecret = config.Github.Secret!;
+                    options.Scope.Add("read:user");
+                    options.Scope.Add("user:email");
+                    options.CorrelationCookie.SameSite = SameSiteMode.Lax;
                 });
         }
 
@@ -138,6 +144,96 @@ public static class IdentityStoresAuthenticationHelper
                 {
                     options.ClientId = config.Apple.Id!;
                     options.ClientSecret = config.Apple.Secret!;
+                });
+        }
+
+        if (config.Amazon?.Enabled == true)
+        {
+            _ = authentication.AddAmazon(options =>
+                {
+                    options.ClientId = config.Amazon.Id!;
+                    options.ClientSecret = config.Amazon.Secret!;
+                });
+        }
+
+        if (config.Basecamp?.Enabled == true)
+        {
+            _ = authentication.AddBasecamp(options =>
+                {
+                    options.ClientId = config.Basecamp.Id!;
+                    options.ClientSecret = config.Basecamp.Secret!;
+                });
+        }
+
+        if (config.Discord?.Enabled == true)
+        {
+            _ = authentication.AddDiscord(options =>
+                {
+                    options.ClientId = config.Discord.Id!;
+                    options.ClientSecret = config.Discord.Secret!;
+                });
+        }
+
+        if (config.Notion?.Enabled == true)
+        {
+            _ = authentication.AddNotion(options =>
+                {
+                    options.ClientId = config.Notion.Id!;
+                    options.ClientSecret = config.Notion.Secret!;
+                });
+        }
+
+        if (config.Okta?.Enabled == true)
+        {
+            _ = authentication.AddOkta(options =>
+                {
+                    options.ClientId = config.Okta.Id!;
+                    options.ClientSecret = config.Okta.Secret!;
+                });
+        }
+
+        if (config.PayPal?.Enabled == true)
+        {
+            _ = authentication.AddPaypal(options =>
+                {
+                    options.ClientId = config.PayPal.Id!;
+                    options.ClientSecret = config.PayPal.Secret!;
+                });
+        }
+
+        if (config.Reddit?.Enabled == true)
+        {
+            _ = authentication.AddReddit(options =>
+                {
+                    options.ClientId = config.Reddit.Id!;
+                    options.ClientSecret = config.Reddit.Secret!;
+                });
+        }
+
+        if (config.Shopify?.Enabled == true)
+        {
+            _ = authentication.AddShopify(options =>
+                {
+                    options.ClientId = config.Shopify.Id!;
+                    options.ClientSecret = config.Shopify.Secret!;
+                });
+        }
+
+        if (config.Slack?.Enabled == true)
+        {
+            _ = authentication.AddSlack(options =>
+                {
+                    options.ClientId = config.Slack.Id!;
+                    options.ClientSecret = config.Slack.Secret!;
+                });
+        }
+
+        if (config.Yahoo?.Enabled == true)
+        {
+            _ = authentication.AddYahoo(options =>
+                {
+                    options.ClientId = config.Yahoo.Id!;
+                    options.ClientSecret = config.Yahoo.Secret!;
                 });
         }
 

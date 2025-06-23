@@ -42,7 +42,7 @@ public static class IdentityStoresAuthenticationHelper
 
         // Configure data protection with better directory handling
         string dataProtectionPath = string.IsNullOrWhiteSpace(config.DataProtectionPath)
-            ? Path.Combine(AppContext.BaseDirectory, "data-protection-keys")
+            ? Path.Combine(AppContext.BaseDirectory, "/data/protection-keys")
             : config.DataProtectionPath;
 
         // Ensure directory exists

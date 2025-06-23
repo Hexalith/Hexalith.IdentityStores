@@ -2,7 +2,9 @@
   <PropertyGroup>
     <!-- Define a property to store the path of the parent Directory.Build.props. -->
     <ParentDirectoryBuildProps>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</ParentDirectoryBuildProps>
-    <HexalithPackageBuildProps>$(MSBuildThisFileDirectory)Hexalith.Builds/Hexalith.Package.props</HexalithPackageBuildProps>
+    <Hexalith1PackageBuildProps>$(MSBuildThisFileDirectory)../../Hexalith.Builds/Hexalith.Package.props</Hexalith1PackageBuildProps>
+    <Hexalith2PackageBuildProps>$(MSBuildThisFileDirectory)../../../Hexalith.Builds/Hexalith.Package.props</Hexalith2PackageBuildProps>
+    <Hexalith3PackageBuildProps>$(MSBuildThisFileDirectory)../../../../Hexalith.Builds/Hexalith.Package.props</Hexalith3PackageBuildProps>
     <Description>Hexalith Dapr Actor based identity Store</Description>
     <PackageProjectUrl>https://github.com/Hexalith/Hexalith.IdentityStores</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Hexalith/Hexalith.IdentityStores</RepositoryUrl>
@@ -11,5 +13,7 @@
 
   <!-- Import the parent Directory.Build.props file if it exists -->
   <Import Project="$(ParentDirectoryBuildProps)" Condition="Exists('$(ParentDirectoryBuildProps)')" />
-  <Import Project="$(HexalithPackageBuildProps)Hexalith.Builds/Hexalith.Package.props" Condition="Exists('$(HexalithPackageBuildProps)Hexalith.Builds/Hexalith.Package.props')" />
+  <Import Project="$(Hexalith1PackageBuildProps)" Condition="Exists('$(Hexalith1PackageBuildProps)')" />
+  <Import Project="$(Hexalith2PackageBuildProps)" Condition="Exists('$(Hexalith2PackageBuildProps)') And !Exists('$(Hexalith1PackageBuildProps)')" />
+  <Import Project="$(Hexalith3PackageBuildProps)" Condition="Exists('$(Hexalith3PackageBuildProps)') And !Exists('$(Hexalith1PackageBuildProps)') And !Exists('$(Hexalith2PackageBuildProps)')" />
 </Project>

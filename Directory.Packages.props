@@ -6,10 +6,4 @@
   <!-- Import the Directory.Package.props file in Hexalith.Builds. -->
   <Import Project="$(ParentPackageProps)" Condition="Exists('$(ParentPackageProps)')" />
   <Import Project="$(LocalHexalithPackageProps)" Condition="Exists('$(LocalHexalithPackageProps)')" />
-  <ItemGroup>
-    <PackageVersion Include="Hexalith.Application.Partitions.Abstractions" Version="1.67.7" />
-    <PackageVersion Include="Hexalith.Application.Sessions.Abstractions" Version="1.67.7" />
-    <PackageVersion Include="Hexalith.Infrastructure.DaprRuntime" Version="1.67.7" />
-    <PackageVersion Include="Hexalith.UI.Components" Version="1.67.7" />
-  </ItemGroup>
 </Project>

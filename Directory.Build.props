@@ -11,9 +11,9 @@
   <Import Project="$(ParentDirectoryBuildProps)" Condition="Exists('$(ParentDirectoryBuildProps)')" />
 
   <!-- Import the Hexalith.Build.props file in Hexalith.Builds. This file must exist. -->
-  <Import Project="$(Hexalith1BuildBuildProps)" Condition="Exists('$(Hexalith1BuildBuildProps)') And !Exists('$(HexalithBuildsRoot)')" />
-  <Import Project="$(Hexalith2BuildBuildProps)" Condition="Exists('$(Hexalith2BuildBuildProps)') And !Exists('$(HexalithBuildsRoot)')" />
-  <Import Project="$(Hexalith3BuildBuildProps)" Condition="Exists('$(Hexalith3BuildBuildProps)') And !Exists('$(HexalithBuildsRoot)')" />
+  <Import Project="$(Hexalith1BuildBuildProps)" Condition="Exists('$(Hexalith1BuildBuildProps)') And '$(HexalithBuildsRoot)' == ''" />
+  <Import Project="$(Hexalith2BuildBuildProps)" Condition="Exists('$(Hexalith2BuildBuildProps)') And '$(HexalithBuildsRoot)' == ''" />
+  <Import Project="$(Hexalith3BuildBuildProps)" Condition="Exists('$(Hexalith3BuildBuildProps)') And '$(HexalithBuildsRoot)' == ''" />
 
   <PropertyGroup>
     <Product>Hexalith.IdentityStores</Product>

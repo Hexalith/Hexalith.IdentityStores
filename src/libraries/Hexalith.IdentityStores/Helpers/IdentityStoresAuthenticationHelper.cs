@@ -8,6 +8,7 @@ namespace Hexalith.IdentityStores.Helpers;
 using System;
 using System.IO;
 
+using Hexalith.Commons.Configurations;
 using Hexalith.IdentityStores.Configurations;
 
 using Microsoft.AspNetCore.Authentication;
@@ -35,31 +36,26 @@ public static class IdentityStoresAuthenticationHelper
         IdentityStoresSettings? config = configuration.GetSection(IdentityStoresSettings
             .ConfigurationName())
             .Get<IdentityStoresSettings>();
-        if (config is null)
-        {
-            return services;
-        }
-
-        // Configure data protection with better directory handling
-        string dataProtectionPath = string.IsNullOrWhiteSpace(config.DataProtectionPath)
-            ? Path.Combine(AppContext.BaseDirectory, "/data/protection-keys")
-            : config.DataProtectionPath;
+        SettingsException.ThrowIfUndefined<IdentityStoresSettings>(config?.DataProtectionPath);
 
         // Ensure directory exists
-        try
+        if (!Directory.Exists(config.DataProtectionPath))
         {
-            _ = Directory.CreateDirectory(dataProtectionPath);
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException($"Failed to create data protection directory at '{dataProtectionPath}'.", ex);
+            try
+            {
+                _ = Directory.CreateDirectory(config.DataProtectionPath);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to create data protection directory at '{config.DataProtectionPath}'.", ex);
+            }
         }
 
         // Add data protection with more reliable configuration
         _ = services.AddDataProtection()
             .SetApplicationName(nameof(Hexalith))
             .SetDefaultKeyLifetime(TimeSpan.FromDays(30))
-            .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionPath));
+            .PersistKeysToFileSystem(new DirectoryInfo(config.DataProtectionPath));
 
         AuthenticationBuilder authentication = services
             .AddAuthentication()

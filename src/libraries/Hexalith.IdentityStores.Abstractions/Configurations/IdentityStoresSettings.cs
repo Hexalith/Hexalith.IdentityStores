@@ -76,14 +76,14 @@ public class IdentityStoresSettings(
     public AuthenticationCredentials? Basecamp { get; set; } = basecamp;
 
     /// <summary>
+    /// Gets or sets the path to the data protection store.
+    /// </summary>
+    public string? DataProtectionPath { get; set; } = string.IsNullOrWhiteSpace(dataProtectionPath) ? "/data/protection-keys" : dataProtectionPath;
+
+    /// <summary>
     /// Gets or sets the Discord authentication credentials.
     /// </summary>
     public AuthenticationCredentials? Discord { get; set; } = discord;
-
-    /// <summary>
-    /// Gets or sets the path to the data protection store.
-    /// </summary>
-    public string? DataProtectionPath { get; set; } = dataProtectionPath;
 
     /// <summary>
     /// Gets or sets the Facebook authentication credentials.

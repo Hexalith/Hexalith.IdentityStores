@@ -46,7 +46,14 @@ public static class IdentityStoresAuthenticationHelper
             : config.DataProtectionPath;
 
         // Ensure directory exists
-        _ = Directory.CreateDirectory(dataProtectionPath);
+        try
+        {
+            _ = Directory.CreateDirectory(dataProtectionPath);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to create data protection directory at '{dataProtectionPath}'.", ex);
+        }
 
         // Add data protection with more reliable configuration
         _ = services.AddDataProtection()

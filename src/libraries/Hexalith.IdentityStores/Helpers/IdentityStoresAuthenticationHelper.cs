@@ -35,29 +35,40 @@ public static class IdentityStoresAuthenticationHelper
         ArgumentNullException.ThrowIfNull(configuration);
         IdentityStoresSettings? config = configuration.GetSection(IdentityStoresSettings
             .ConfigurationName())
-            .Get<IdentityStoresSettings>();
-        SettingsException.ThrowIfUndefined<IdentityStoresSettings>(config?.DataProtectionPath);
+            .Get<IdentityStoresSettings>()
+                ?? throw new InvalidOperationException($"Configuration section '{IdentityStoresSettings.ConfigurationName()}' is missing or invalid.");
 
-        // Ensure directory exists
-        if (!Directory.Exists(config.DataProtectionPath))
+        // Get DOTNET_ReadOnlyDataProtectionKeyDirectory value from the configuration
+        string readonlyDataProtectionKeyDirectory = configuration["DOTNET_ReadOnlyDataProtectionKeyDirectory"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(readonlyDataProtectionKeyDirectory))
         {
-            try
-            {
-                // Log the creation of the directory
-                Console.WriteLine($"Creating data protection directory at '{config.DataProtectionPath}'...");
-                _ = Directory.CreateDirectory(config.DataProtectionPath);
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"Failed to create data protection directory at '{config.DataProtectionPath}'. ", ex);
-            }
-        }
+            SettingsException.ThrowIfUndefined<IdentityStoresSettings>(config.DataProtectionPath);
 
-        // Add data protection with more reliable configuration
-        _ = services.AddDataProtection()
-            .SetApplicationName(nameof(Hexalith))
-            .SetDefaultKeyLifetime(TimeSpan.FromDays(30))
-            .PersistKeysToFileSystem(new DirectoryInfo(config.DataProtectionPath));
+            // Ensure directory exists
+            if (!Directory.Exists(config.DataProtectionPath))
+            {
+                try
+                {
+                    // Log the creation of the directory
+                    Console.WriteLine($"Creating data protection directory at '{config.DataProtectionPath}'...");
+                    _ = Directory.CreateDirectory(config.DataProtectionPath);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"Failed to create data protection directory at '{config.DataProtectionPath}'. ", ex);
+                }
+            }
+
+            // Add data protection with more reliable configuration
+            _ = services.AddDataProtection()
+                .SetApplicationName(nameof(Hexalith))
+                .SetDefaultKeyLifetime(TimeSpan.FromDays(30))
+                .PersistKeysToFileSystem(new DirectoryInfo(config.DataProtectionPath));
+        }
+        else
+        {
+            Console.WriteLine($"Running in Azure Container App with data protection enabled. Using read-only data protection directory at '{readonlyDataProtectionKeyDirectory}'...");
+        }
 
         AuthenticationBuilder authentication = services
             .AddAuthentication()

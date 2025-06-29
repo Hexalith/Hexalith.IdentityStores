@@ -43,11 +43,13 @@ public static class IdentityStoresAuthenticationHelper
         {
             try
             {
+                // Log the creation of the directory
+                Console.WriteLine($"Creating data protection directory at '{config.DataProtectionPath}'...");
                 _ = Directory.CreateDirectory(config.DataProtectionPath);
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Failed to create data protection directory at '{config.DataProtectionPath}'.", ex);
+                throw new InvalidOperationException($"Failed to create data protection directory at '{config.DataProtectionPath}'. ", ex);
             }
         }
 

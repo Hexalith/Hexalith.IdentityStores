@@ -36,7 +36,7 @@ public static class IdentityStoresAuthenticationHelper
         IdentityStoresSettings? config = configuration.GetSection(IdentityStoresSettings
             .ConfigurationName())
             .Get<IdentityStoresSettings>()
-                ?? throw new InvalidOperationException($"Configuration section '{IdentityStoresSettings.ConfigurationName()}' is missing or invalid.");
+                ?? new IdentityStoresSettings();
 
         // Get DOTNET_ReadOnlyDataProtectionKeyDirectory value from the configuration
         string readonlyDataProtectionKeyDirectory = configuration["DOTNET_ReadOnlyDataProtectionKeyDirectory"] ?? string.Empty;

@@ -161,6 +161,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".tools", ".tools", "{AFA09F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hexalith.IdentityStores.UI", "src\libraries\Hexalith.IdentityStores.UI\Hexalith.IdentityStores.UI.csproj", "{1BAE9A4B-2FF6-6734-458A-6111F247AF62}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{94173C1F-F164-7F46-05F1-55CADD2F14B9}"
+	ProjectSection(SolutionItems) = preProject
+		Hexalith.Builds\Samples\Module.Directory.Build.props = Hexalith.Builds\Samples\Module.Directory.Build.props
+		Hexalith.Builds\Samples\Module.Directory.Packages.props = Hexalith.Builds\Samples\Module.Directory.Packages.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -215,6 +221,7 @@ Global
 		{6B54B06C-EFB1-4EF2-A5C7-BB62E19E7643} = {538F6CF8-F1A1-4584-BE2E-AF2418F61641}
 		{401F4B14-7261-488A-A953-EDAE92B7C97C} = {DA4446BE-296C-40E4-B0FF-05F9AF0F2502}
 		{1BAE9A4B-2FF6-6734-458A-6111F247AF62} = {884D0EEB-6F10-4783-A58F-178A17DF1131}
+		{94173C1F-F164-7F46-05F1-55CADD2F14B9} = {DA4446BE-296C-40E4-B0FF-05F9AF0F2502}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7B7376F4-B33A-4BC6-AFCA-C09B437568D7}

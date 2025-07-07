@@ -14,9 +14,9 @@
 
   <ItemGroup>
     <!-- Define packages versions for this module. -->
-    <PackageVersion Include="Hexalith.Infrastructure.DaprRuntime" Version="1.68.9" />
-    <PackageVersion Include="Hexalith.UI.Components" Version="1.68.9" />
-    <PackageVersion Include="Hexalith.Application.Sessions.Abstractions" Version="1.68.9" />
-    <PackageVersion Include="Hexalith.Application.Partitions.Abstractions" Version="1.68.9" />
+    <PackageVersion Include="Hexalith.Infrastructure.DaprRuntime" Version="1.69.1" />
+    <PackageVersion Include="Hexalith.UI.Components" Version="1.69.1" />
+    <PackageVersion Include="Hexalith.Application.Sessions.Abstractions" Version="1.69.1" />
+    <PackageVersion Include="Hexalith.Application.Partitions.Abstractions" Version="1.69.1" />
   </ItemGroup>
 </Project>

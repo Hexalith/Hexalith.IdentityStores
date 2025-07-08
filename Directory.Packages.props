@@ -11,12 +11,11 @@
   <Import Project="$(Hexalith1BuildPackageProps)" Condition="Exists('$(Hexalith1BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
   <Import Project="$(Hexalith2BuildPackageProps)" Condition="Exists('$(Hexalith2BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
   <Import Project="$(Hexalith3BuildPackageProps)" Condition="'$(HexalithVersionsLoaded)' != 'true'" />
-
   <ItemGroup>
     <!-- Define packages versions for this module. -->
-    <PackageVersion Include="Hexalith.Infrastructure.DaprRuntime" Version="1.69.1" />
-    <PackageVersion Include="Hexalith.UI.Components" Version="1.69.1" />
-    <PackageVersion Include="Hexalith.Application.Sessions.Abstractions" Version="1.69.1" />
-    <PackageVersion Include="Hexalith.Application.Partitions.Abstractions" Version="1.69.1" />
+    <PackageVersion Include="Hexalith.Infrastructure.DaprRuntime" Version="1.69.4" />
+    <PackageVersion Include="Hexalith.UI.Components" Version="1.69.4" />
+    <PackageVersion Include="Hexalith.Application.Sessions.Abstractions" Version="1.69.4" />
+    <PackageVersion Include="Hexalith.Application.Partitions.Abstractions" Version="1.69.4" />
   </ItemGroup>
 </Project>

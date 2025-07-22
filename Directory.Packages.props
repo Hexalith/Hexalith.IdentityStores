@@ -13,9 +13,9 @@
   <Import Project="$(Hexalith3BuildPackageProps)" Condition="'$(HexalithVersionsLoaded)' != 'true'" />
   <ItemGroup>
     <!-- Define packages versions for this module. -->
-    <PackageVersion Include="Hexalith.Infrastructure.DaprRuntime" Version="1.70.7" />
-    <PackageVersion Include="Hexalith.UI.Components" Version="1.70.7" />
-    <PackageVersion Include="Hexalith.Application.Sessions.Abstractions" Version="1.70.7" />
-    <PackageVersion Include="Hexalith.Application.Partitions.Abstractions" Version="1.70.7" />
+    <PackageVersion Include="Hexalith.Infrastructure.DaprRuntime" Version="1.70.8" />
+    <PackageVersion Include="Hexalith.UI.Components" Version="1.70.8" />
+    <PackageVersion Include="Hexalith.Application.Sessions.Abstractions" Version="1.70.8" />
+    <PackageVersion Include="Hexalith.Application.Partitions.Abstractions" Version="1.70.8" />
   </ItemGroup>
 </Project>

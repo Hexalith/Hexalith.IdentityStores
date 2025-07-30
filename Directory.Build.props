@@ -22,6 +22,6 @@
     <RepositoryUrl>https://github.com/Hexalith/Hexalith.IdentityStores</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Hexalith/Hexalith.IdentityStores</PackageProjectUrl>
     <PackageTags>hexalith;identity store;</PackageTags>
-    <Description>Hexalith Identity Store Mmodule</Description>
+    <Description>Hexalith Identity Store module</Description>
   </PropertyGroup>
 </Project>

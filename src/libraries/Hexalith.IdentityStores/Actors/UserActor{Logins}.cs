@@ -24,6 +24,7 @@ public partial class UserActor
     /// <exception cref="InvalidOperationException">When user not found.</exception>
     public async Task AddLoginAsync(CustomUserLoginInfo login)
     {
+        ArgumentNullException.ThrowIfNull(login);
         string userId = Id.ToUnescapeString();
         _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)

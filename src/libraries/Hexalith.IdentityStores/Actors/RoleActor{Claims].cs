@@ -26,6 +26,8 @@ public partial class RoleActor
     /// <exception cref="InvalidOperationException">Thrown when the role state is not found.</exception>
     public async Task AddClaimsAsync(IEnumerable<Claim> claims)
     {
+        ArgumentNullException.ThrowIfNull(claims);
+
         string roleId = Id.ToUnescapeString();
         _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)
@@ -70,6 +72,7 @@ public partial class RoleActor
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task RemoveClaimsAsync(IEnumerable<Claim> claims)
     {
+        ArgumentNullException.ThrowIfNull(claims);
         string roleId = Id.ToUnescapeString();
         _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)

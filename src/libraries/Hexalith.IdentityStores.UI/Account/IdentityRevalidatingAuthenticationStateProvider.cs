@@ -33,6 +33,7 @@ public sealed class IdentityRevalidatingAuthenticationStateProvider(
     protected override TimeSpan RevalidationInterval => TimeSpan.FromMinutes(30);
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Not Applicatble")]
     protected override async Task<bool> ValidateAuthenticationStateAsync(
         AuthenticationState authenticationState, CancellationToken cancellationToken)
     {

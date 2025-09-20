@@ -23,6 +23,7 @@ public partial class UserActor
     /// <exception cref="InvalidOperationException">When user not found.</exception>
     public async Task AddTokenAsync(CustomUserToken token)
     {
+        ArgumentNullException.ThrowIfNull(token);
         string userId = Id.ToUnescapeString();
         _state = await GetStateAsync(CancellationToken.None).ConfigureAwait(false);
         if (_state is null)

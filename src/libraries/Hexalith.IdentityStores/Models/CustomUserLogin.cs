@@ -27,6 +27,7 @@ public class CustomUserLogin : IdentityUserLogin<string>
     /// <param name="userId">The user ID.</param>
     public CustomUserLogin(CustomUserLoginInfo loginInfo, string userId)
     {
+        ArgumentNullException.ThrowIfNull(loginInfo);
         LoginProvider = loginInfo.LoginProvider;
         ProviderKey = loginInfo.ProviderKey;
         ProviderDisplayName = loginInfo.DisplayName;

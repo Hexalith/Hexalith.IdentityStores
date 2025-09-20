@@ -79,6 +79,8 @@ public partial class DaprActorUserStore
     /// <inheritdoc/>
     public override async Task ReplaceClaimAsync(CustomUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(claim);
+        ArgumentNullException.ThrowIfNull(newClaim);
         ArgumentNullException.ThrowIfNull(user);
         cancellationToken.ThrowIfCancellationRequested();
         ThrowIfDisposed();

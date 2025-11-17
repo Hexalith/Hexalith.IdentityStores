@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
-        <TargetFrameworks>net9.0</TargetFrameworks>
-        <NoWarn>$(NoWarn);S3353;S3996;S134;S3995;</NoWarn>
+      <TargetFramework>net10.0</TargetFramework>
+      <NoWarn>$(NoWarn);S3353;S3996;S134;S3995;BL0008;CA1054;</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />

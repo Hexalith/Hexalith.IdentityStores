@@ -86,6 +86,7 @@ public partial class DaprActorUserStore
 
         IUserActor actor = ActorProxy.DefaultProxyFactory.CreateUserActor(userId);
         CustomUserLogin? result = await actor.FindLoginAsync(loginProvider, providerKey).ConfigureAwait(false);
+
         if (result is not null)
         {
             result.UserId = userId;

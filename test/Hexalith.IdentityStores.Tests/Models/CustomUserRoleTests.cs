@@ -50,7 +50,7 @@ public class CustomUserRoleTests
         {
             UserId = "user123",
             RoleId = "role456",
-            ExternalData = /*lang=json,strict*/ "{\"key\":\"value\"}",
+            ExternalData = "{\"key\":\"value\"}",
             ExternalId = "ext123",
         };
 

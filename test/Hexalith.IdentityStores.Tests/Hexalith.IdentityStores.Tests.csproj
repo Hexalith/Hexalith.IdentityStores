@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <NoWarn>$(NoWarn);IDE0079;RCS1251;</NoWarn>
+    <NoWarn>$(NoWarn);IDE0079;RCS1251;JSON002;IDE0055;</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />

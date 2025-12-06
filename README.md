@@ -19,68 +19,64 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Hexalith_Hexalith.IdentityStores&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Hexalith_Hexalith.IdentityStores)
 
 [![Build status](https://github.com/Hexalith/Hexalith.IdentityStores/actions/workflows/build-release.yml/badge.svg)](https://github.com/Hexalith/Hexalith.IdentityStores/actions)
-[![NuGet](https://img.shields.io/nuget/v/Hexalith.IdentityStores.svg)](https://www.nuget.org/packages/Hexalith.IdentityStores) <!-- Assuming a main package exists -->
-[![Latest](https://img.shields.io/github/v/release/Hexalith/Hexalith.IdentityStores?include_prereleases&label=preview)](https://github.com/Hexalith/Hexalith.IdentityStores/pkgs/nuget/Hexalith.IdentityStores) <!-- Adjust if main package name differs -->
 
 ## Overview
 
-This repository contains the Hexalith Dapr Identity Stores components, providing functionalities related to user identity management, authentication, and authorization within the Hexalith ecosystem. It includes libraries, server implementations, and examples for integrating identity services into applications.
+This repository contains Hexalith Identity Stores components for user identity management, authentication, and authorization within the Hexalith ecosystem. It includes class libraries and an example app for integrating identity services into applications.
 
 ## Dapr Integration
 
-[Dapr](https://dapr.io/) (Distributed Application Runtime) is a portable, event-driven runtime that makes it easy to build resilient, microservice-based applications. Hexalith.IdentityStores leverages Dapr's capabilities in the following ways:
+[Dapr](https://dapr.io/) is used to provide building blocks around state, service invocation, pub/sub, and secrets. The libraries in this repo include helpers and actor-based stores designed to work with Dapr.
 
 ### Key Dapr Building Blocks Used
 
-- **State Management**: Identity data is persisted using Dapr's state management, allowing for pluggable storage providers (Redis, Azure CosmosDB, etc.)
-- **Service-to-Service Invocation**: Secure communication between identity services and consumers
-- **Pub/Sub Messaging**: Event-driven architecture for identity-related events (user created, role changed, etc.)
-- **Secrets Management**: Secure storage of sensitive identity configuration 
-
-### Benefits of Dapr in Hexalith.IdentityStores
-
-- **Platform Agnostic**: Runs on Kubernetes, VMs, or local development environments
-- **Pluggable Components**: Easily swap underlying infrastructure (databases, message queues) without code changes
-- **Language Independence**: Interact with identity services from any language or framework that supports HTTP/gRPC
-- **Built-in Resilience**: Circuit breaking, retries, and distributed tracing capabilities
+- State Management: Persist identity-related data using pluggable state stores.
+- Service-to-Service Invocation: Communicate between identity actors/services and consumers.
+- Pub/Sub Messaging: Publish identity-related events.
+- Secrets Management: Store sensitive configuration securely.
 
 ### Dapr Architecture in Hexalith.IdentityStores
 
-Identity data is stored in Dapr state stores while the authentication and authorization logic is implemented as Dapr services. Applications can interact with the identity services through standard Dapr APIs, using either the Dapr client SDKs or direct HTTP/gRPC calls.
+Identity data and operations are implemented using Dapr actors and services. Applications interact via standard Dapr APIs or client SDKs.
 
 ## Repository Structure
 
-The repository is organized as follows:
-
-- **`src/`**: Contains the core source code.
-  - [`src/libraries/`](./src/libraries/README.md): Class libraries intended to be packaged as NuGet packages. This is likely where the main identity store logic resides.
-  - [`src/servers/`](./src/servers/README.md): Server projects, potentially including API endpoints or services related to identity, possibly packaged as Docker containers.
-  - [`src/examples/`](./src/examples/README.md): Sample projects demonstrating how to use the libraries and servers.
-- **`test/`**: Contains unit, integration, and other test projects.
-  - [`test/Hexalith.IdentityStores.Tests/`](./test/Hexalith.IdentityStores.Tests/): Example test project.
-- **`tools/`**: Utility scripts for development tasks (e.g., `flush_redis.bat`).
-- **`Hexalith.Builds/`**: Git submodule containing shared build configurations, tools, and scripts. See [Hexalith.Builds/README.md](./Hexalith.Builds/README.md) for details on the build system.
-- **`.github/`**: GitHub-specific files, including workflow definitions and issue templates.
-- **Root Files**: Configuration files (`.sln`, `.props`, `package.json`), license, documentation instructions (`DOCUMENTATION.ai.md`), and this README.
+- `src/`: Core source code.
+  - `src/libraries/`: Class libraries packaged as NuGet.
+    - `Hexalith.IdentityStores` (library): Dapr actor-based identity stores, models, helpers, and services.
+    - `Hexalith.IdentityStores.Abstractions` (library): Public abstractions, configurations, and constants shared across the ecosystem.
+    - `Hexalith.IdentityStores.UI` (library): UI components and helpers (Blazor) for account flows.
+  - `src/examples/`: Sample projects demonstrating usage.
+    - `Hexalith.IdentityStores.Example` (console example): Minimal example wiring identity stores.
+  - `src/servers/`: Documentation placeholder. No server projects are present in this repository at the moment. See `src/servers/README.md`.
+- `test/`: Tests.
+  - `Hexalith.IdentityStores.Tests`: Unit tests.
+- `tools/`: Utility scripts.
+- `Hexalith.Builds/`: Git submodule for shared build configurations.
+- `.github/`: GitHub workflows and templates.
+- Root files: Solution, props, package, license, and documentation.
 
 ## Getting Started
 
 ### Prerequisites
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download) or later
-- [PowerShell 7](https://github.com/PowerShell/PowerShell) or later (for initialization script)
-- [Git](https://git-scm.com/) (including Git LFS if used)
-- [Dapr](https://dapr.io/) 
-- [Docker](https://www.docker.com/) (if running server projects)
+- .NET 10 SDK or later
+- PowerShell 7 or later
+- Git
+- Dapr (optional but recommended for actor/state features)
+- Docker (optional, for running Dapr locally)
 
 ### Initialization
 
-1.  **Clone the repository:**
+1. Clone the repository:
     ```bash
     git clone --recurse-submodules https://github.com/Hexalith/Hexalith.IdentityStores.git
     cd Hexalith.IdentityStores
     ```
-    If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive`.
+    If you cloned without `--recurse-submodules`, run:
+    ```bash
+    git submodule update --init --recursive
+    ```
 
 ### Building the Code
 
@@ -102,8 +98,8 @@ dotnet test Hexalith.IdentityStores.sln
 
 ### Contributing
 
-Please refer to the contribution guidelines (if available) before submitting pull requests. Ensure code adheres to the project's coding standards and passes all tests.
+Refer to contribution guidelines if available before submitting pull requests. Ensure code adheres to the project's coding standards and passes all tests.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License. See `LICENSE` for details.

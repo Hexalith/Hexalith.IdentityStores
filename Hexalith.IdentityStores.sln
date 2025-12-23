@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.35906.104
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11312.210 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -83,11 +83,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Props", "Props", "{361A8C05
 	ProjectSection(SolutionItems) = preProject
 		Hexalith.Builds\Props\Directory.Packages.props = Hexalith.Builds\Props\Directory.Packages.props
 		Hexalith.Builds\Props\Environment.Build.props = Hexalith.Builds\Props\Environment.Build.props
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AI", "AI", "{A52F7525-CCC2-40B5-8250-FC69502D355C}"
-	ProjectSection(SolutionItems) = preProject
-		Hexalith.Builds\AI\project-documentation.md = Hexalith.Builds\AI\project-documentation.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{995F348D-8EAF-42B4-8838-A193F6026A9F}"
@@ -208,7 +203,6 @@ Global
 		{339097B8-FCFF-4AD2-8535-C6FA645ED419} = {2E1479EA-06ED-4A69-8F50-F17804066FA6}
 		{DA4446BE-296C-40E4-B0FF-05F9AF0F2502} = {C67B5007-8999-4638-8317-C6DA2F62D65C}
 		{361A8C05-7F6F-4BA3-8321-59A94294831A} = {DA4446BE-296C-40E4-B0FF-05F9AF0F2502}
-		{A52F7525-CCC2-40B5-8250-FC69502D355C} = {DA4446BE-296C-40E4-B0FF-05F9AF0F2502}
 		{995F348D-8EAF-42B4-8838-A193F6026A9F} = {DA4446BE-296C-40E4-B0FF-05F9AF0F2502}
 		{538F6CF8-F1A1-4584-BE2E-AF2418F61641} = {DA4446BE-296C-40E4-B0FF-05F9AF0F2502}
 		{217346B8-9657-42EB-8E1B-6A6380F0541D} = {538F6CF8-F1A1-4584-BE2E-AF2418F61641}
